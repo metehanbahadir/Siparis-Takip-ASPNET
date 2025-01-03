@@ -1,0 +1,98 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.TedarikSiparisleri>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<br />
+<h3>Tedarik Siparişleri - Toplam: <span style="color:blue;">@ViewBag.TedarikSiparisCount</span></h3>
+<br />
+<a href="/TedarikSiparisleri/TersSiralama" title="TersSıralama" class="btn btn-primary" style="color:white;"><i class="fa-solid fa-arrow-up-a-z"></i></a>
+<a href="/TedarikSiparisleri/ExcelExport" title="Excel Döküm Al" class="btn btn-success" style="color:white;"><i class="fa-solid fa-file-excel"></i></a>
+<div style="float:right; margin-right:1000px;">
+    @using (Html.BeginForm("TedarikSiparisFilter", "TedarikSiparisleri", FormMethod.Get))
+    {
+        <div class="container">
+            @Html.TextBox("f", null, new { style = "width:250px; text-align:center; position: absolute; left: 40%; transform: translate(-50%, -50%);", title = "Cari, Stok Kodu, Ürün İsmi, Sipariş Cinsi, Durum, Not arayabilirsiniz", placeholder = "Tedarik Siparişi Arayın", autocomplete = "off", @class = "form-control" })
+        </div>
+    }
+</div>
+<br />
+<br />
+<table class="table table-bordered table table-hover">
+    <tr>
+        <th>Cinsi</th>
+        <th>Kodu</th>
+        <th>Ürün</th>
+        <th>Sipariş T.</th>
+        <th>Teslim T.</th>
+        <th>Sipariş Cinsi</th>
+        <th>Cari</th>
+        <th>Seri-Sıra No</th>
+        <th>Sipariş Mik.</th>
+        <th>Tmm. Mik.</th>
+        <th>Kalan Sip. Mik.</th>
+        <th>Birimi</th>
+    </tr>
+    @foreach (var ts in Model)
+    {
+        ts.Evrak_seri_no = ts.Evrak_seri_no + " " + ts.Evrak_sira_no;
+        var kalangun = (Convert.ToDateTime(ts.Teslim_tarihi) - Convert.ToDateTime(System.DateTime.Today)).Days;
+
+        if (Convert.ToDateTime(ts.Teslim_tarihi) < Convert.ToDateTime(System.DateTime.Today))
+        {
+            <tr class="bg-danger">
+                <td style="color:white;">@ts.Cinsi</td>
+                <td style="color:white;">@ts.Stok_kodu</td>
+                <td style="color:white;">@ts.Stok_isim</td>
+                <td style="color:white;">@ts.Siparis_tarihi.ToString("dd/MM/yyyy")</td>
+                <td style="color:white;">@ts.Teslim_tarihi.ToString("dd/MM/yyyy") <br /> <span style="font:bold;">@kalangun</span></td>
+                <td style="color:white;">@ts.Siparis_cinsi</td>
+                <td style="color:white;">@ts.Cari_ismi</td>
+                <td style="color:white;">@ts.Evrak_seri_no</td>
+                <td style="color:white;">@ts.Siparis_miktar</td>
+                <td style="color:white;">@ts.Tamamlanan_miktar</td>
+                <td style="color:white;">@ts.Kalan_miktar</td>
+                <td style="color:white;">@ts.Birim</td>
+            </tr>
+        }
+        else if ((Convert.ToDateTime(ts.Teslim_tarihi) - Convert.ToDateTime(System.DateTime.Today)).Days <= 7)
+        {
+            <tr class="bg-warning">
+                <td style="color:black;">@ts.Cinsi</td>
+                <td style="color:black;">@ts.Stok_kodu</td>
+                <td style="color:black;">@ts.Stok_isim</td>
+                <td style="color:black;">@ts.Siparis_tarihi.ToString("dd/MM/yyyy")</td>
+                <td style="color:black;">@ts.Teslim_tarihi.ToString("dd/MM/yyyy") <br /> <span style="font:bold;">@kalangun</span></td>
+                <td style="color:black;">@ts.Siparis_cinsi</td>
+                <td style="color:black;">@ts.Cari_ismi</td>
+                <td style="color:black;">@ts.Evrak_seri_no</td>
+                <td style="color:black;">@ts.Siparis_miktar</td>
+                <td style="color:black;">@ts.Tamamlanan_miktar</td>
+                <td style="color:black;">@ts.Kalan_miktar</td>
+                <td style="color:black;">@ts.Birim</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td style="color:white;">@ts.Cinsi</td>
+                <td style="color:white;">@ts.Stok_kodu</td>
+                <td style="color:white;">@ts.Stok_isim</td>
+                <td style="color:white;">@ts.Siparis_tarihi.ToString("dd/MM/yyyy")</td>
+                <td style="color:white;">@ts.Teslim_tarihi.ToString("dd/MM/yyyy") <br /> <span style="font:bold;">@kalangun</span></td>
+                <td style="color:white;">@ts.Siparis_cinsi</td>
+                <td style="color:white;">@ts.Cari_ismi</td>
+                <td style="color:white;">@ts.Evrak_seri_no</td>
+                <td style="color:white;">@ts.Siparis_miktar</td>
+                <td style="color:white;">@ts.Tamamlanan_miktar</td>
+                <td style="color:white;">@ts.Kalan_miktar</td>
+                <td style="color:white;">@ts.Birim</td>
+            </tr>
+        }
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa }))
+

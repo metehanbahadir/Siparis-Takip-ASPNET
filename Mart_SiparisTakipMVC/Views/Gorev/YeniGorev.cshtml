@@ -1,0 +1,99 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.Gorevler
+@{
+    ViewBag.Title = "Yeni Görev";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+}
+<script>
+    window.onload = function () {
+        $('#YeniGorevModal').modal('show');
+        document.getElementById("txt_Gorev").value = "";
+        document.getElementById("startdate").value = "";
+        document.getElementById("enddate").value = "";
+        document.getElementById("atananpersonel2").disabled = true;
+        document.getElementById("atananpersonel3").disabled = true;
+        document.getElementById("atananpersonel3").disabled = true;
+
+        setTimeout(function () {
+            document.getElementById('NullMailMsg').style.display = 'none';
+        }, 3000); // 3000 milisaniye = 3 saniye
+    }
+
+    function preventSpecialCharacters(event) {
+        // İzin verilen karakterlerin bir listesini oluşturun
+        const allowedCharacters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "a", "b", "c", "ç", "d", "e", "f", "g", "ğ", "h", "ı", "i", "j", "k", "l", "m", "n", "o", "ö", "p", "q", "r", "s", "ş", "t", "u", "ü", "v", "w", "x", "y", "z",
+            "A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "Q", "R", "S", "Ş", "T", "U", "Ü", "V", "W", "X", "Y", "Z", ".", ",", " ", "Enter"];
+
+        // Girilen karakterin izin verilen karakterler listesinde olup olmadığını kontrol edin
+        const isAllowedCharacter = allowedCharacters.includes(event.key);
+
+        // Girilen karakter izin verilen karakterler listesinde değilse, giriş işlemini engelle
+        if (!isAllowedCharacter) {
+            event.preventDefault();
+        }
+    }
+
+    function onChangeDDL2() {
+        var atananpersonel1_value = document.getElementById("atananpersonel1").value;
+        var atananpersonel2 = document.getElementById("atananpersonel2");
+
+        if (atananpersonel1_value != "") {
+            atananpersonel2.disabled = false;
+        }
+        else {
+            atananpersonel2.value = "";
+            atananpersonel2.disabled = true;
+            atananpersonel3.value = "";
+            atananpersonel3.disabled = true;
+        }
+    }
+
+    function onChangeDDL3() {
+        var atananpersonel1_value = document.getElementById("atananpersonel1").value;
+        var atananpersonel2_value = document.getElementById("atananpersonel2").value;
+        var atananpersonel3 = document.getElementById("atananpersonel3");
+
+        if (atananpersonel2_value != "" && atananpersonel2_value != atananpersonel1_value) {
+            atananpersonel3.disabled = false;
+        }
+        else {
+            atananpersonel3.value = "";
+            atananpersonel3.disabled = true;
+        }
+    }
+</script>
+<div class="modal" id="YeniGorevModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Yeni Görev</h3>
+                <a href="/Gorev/Gorevlerim" class="btn btn-primary">X</a>
+            </div>
+            <form class="modal-body" action="/Gorev/YeniGorev" method="post">
+                <h5 id="NullMailMsg" style="color:red; padding-left:20px;">@ViewBag.NullMailMsg</h5>
+                @Html.Label("Konu")
+                @Html.TextAreaFor(x => x.Gorev, new { id = "txt_Gorev", style = "width:400px;", autocomplete = "off", onkeypress = "javascript:return preventSpecialCharacters(event)", required = "required", @class = "form-control" })
+                <br />
+                @Html.Label("Başlama Tarihi")
+                @Html.TextBoxFor(x => x.Baslama_Tarihi, new { id = "startdate", style = "width:400px; text-align:center;", type = "date", required = "required", @class = "form-control" })
+                <br />
+                @Html.Label("Bitiş Tarihi")
+                @Html.TextBoxFor(x => x.Bitis_Tarihi, new { id = "enddate", style = "width:400px; text-align:center;", type = "date", required = "required", @class = "form-control" })
+                <br />
+                @Html.Label("Atanan Personel")
+                @Html.DropDownList("AtananPersonel1", (IEnumerable<SelectListItem>)ViewBag.PersonelDDL, (string)"Seçiniz", new { id = "atananpersonel1", onchange = "javascript: return onChangeDDL2()", style = "width:400px; text-align:center;", @class = "form-control" })
+                <br />
+                @Html.Label("Atanan Personel")
+                @Html.DropDownList("AtananPersonel2", (IEnumerable<SelectListItem>)ViewBag.PersonelDDL, (string)"Seçiniz", new { id = "atananpersonel2", onchange = "javascript: return onChangeDDL3()", style = "width:400px; text-align:center;", @class = "form-control" })
+                <br />
+                @Html.Label("Atanan Personel")
+                @Html.DropDownList("AtananPersonel3", (IEnumerable<SelectListItem>)ViewBag.PersonelDDL, (string)"Seçiniz", new { id = "atananpersonel3", onchange = "javascript: return onChangeDDL3()", style = "width:400px; text-align:center;", @class = "form-control" })
+                <br />
+                <button class="btn btn-primary" id="btn_GorevEkle">Ekle</button>
+            </form>
+
+        </div>
+    </div>
+</div>

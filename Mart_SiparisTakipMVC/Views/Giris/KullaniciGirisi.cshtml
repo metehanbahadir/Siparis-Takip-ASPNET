@@ -1,0 +1,63 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.Kullanici
+@{
+    ViewBag.Title = "Kullanıcı Girişi";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+<script>
+    // Ekran boyutu değiştiğinde resmin boyutunu ayarla
+    window.addEventListener('resize', function () {
+        setResimBoyutu();
+    });
+
+    // Sayfa yüklendiğinde resmin boyutunu ayarla
+    window.addEventListener('load', function () {
+        setResimBoyutu();
+    });
+
+    // Resmin boyutunu ayarlayan fonksiyon
+    function setResimBoyutu() {
+        var resim = document.getElementById('martloginlogo');
+        var ekranGenislik = window.innerWidth;
+        var ekranYukseklik = window.innerHeight;
+
+        // Resmin boyutunu ekranın genişliğine ve yüksekliğine göre ayarla
+        // Örnek boyutlandırma mantığı burada eklenebilir.
+        var yeniGenislik = ekranGenislik * 0.8; // Örnek: Ekran genişliğinin 80%'i
+        var yeniYukseklik = ekranYukseklik * 0.5; // Örnek: Ekran yüksekliğinin 60%'i
+
+        resim.style.width = yeniGenislik + 'px';
+        resim.style.height = yeniYukseklik + 'px';
+    }
+</script>
+<img id="martloginlogo" src="~/Content/martrenklilogo.png" style="width:1600px; height:400px; margin:200px 0 0 100px; opacity:0.3;" />
+<script>
+    window.onload = function () {
+        $('#KullaniciGirisiModal').modal('show');
+        document.getElementById("KullaniciAdi").focus();
+    }
+
+    setTimeout(function () {
+        document.getElementById('HataliGirisMsg').style.display = 'none';
+    }, 5000); // 3000 milisaniye = 3 saniye
+</script>
+<div class="modal" id="KullaniciGirisiModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Kullanıcı Girişi</h3>
+            </div>
+            <form class="modal-body" action="/Giris/KullaniciGirisi" method="post">
+                <span id="HataliGirisMsg" style="color:red; font-size:17px; padding-left:100px;">@ViewBag.BasarisizGiris</span>
+                <br />
+                @Html.LabelFor(x => x.KullaniciAdi)
+                @Html.TextBoxFor(x => x.KullaniciAdi, new { id="KullaniciAdi", style = "width:400px; text-align:center;", required = "required", autocomplete="off", @class = "form-control" })
+                <br />
+                @Html.LabelFor(x => x.Sifre)
+                @Html.TextBoxFor(x => x.Sifre, new { style = "width:400px; text-align:center;", required = "required", autocomplete = "off", @class = "form-control" })
+                <br />
+                <button class="btn btn-primary">Giriş</button>
+            </form>            
+        </div>
+    </div>
+</div>
+

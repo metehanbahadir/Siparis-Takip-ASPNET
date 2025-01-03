@@ -1,0 +1,64 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.GuncelSiparisler
+@{
+    ViewBag.Title = "Sipariş Detayı";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    window.onload = function () {
+        $('#NotEkleModal').modal('show');
+    }
+
+    function preventSpecialCharacters(event) {
+        // İzin verilen karakterlerin bir listesini oluşturun     
+        const allowedCharacters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "a", "b", "c", "ç", "d", "e", "f", "g", "ğ", "h", "ı", "i", "j", "k", "l", "m", "n", "o", "ö", "p", "q", "r", "s", "ş", "t", "u", "ü", "v", "w", "x", "y", "z",
+            "A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "Q", "R", "S", "Ş", "T", "U", "Ü", "V", "W", "X", "Y", "Z", ".", ",", " ", "Enter"];
+
+        // Girilen karakterin izin verilen karakterler listesinde olup olmadığını kontrol edin
+        const isAllowedCharacter = allowedCharacters.includes(event.key);
+
+        // Girilen karakter izin verilen karakterler listesinde değilse, giriş işlemini engelle
+        if (!isAllowedCharacter) {
+            event.preventDefault();
+        }
+    }        
+</script>
+<div class="modal" id="NotEkleModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Not Ekle</h3>
+                <a style="float:right;" href="/Siparis/Index" class="btn btn-primary"><i class="fa-solid fa-xmark"></i></a>
+            </div>
+            <form class="modal-body" action="/Siparis/SiparisDuzenle" method="post">
+                <span style="color:red; font-size:17px; padding:5px 0 0 30px;">@ViewBag.Msg</span>
+                <br />
+                @Html.HiddenFor(x => x.UID)
+                @Html.Label("Ürün İsmi")
+                <h5 style="width:400px; padding-left:10px;">@ViewBag.UrunIsim</h5>
+                <br />
+                @Html.LabelFor(x => x.Durum)
+                @Html.DropDownList("SiparisDurumDDL", new SelectList(new[]
+                {
+                    new SelectListItem { Text = "Seçiniz", Value ="Seçiniz"},
+                    new SelectListItem { Text = "Askıya Alındı",Value ="Askıya Alındı"},
+                    new SelectListItem { Text = "Tedarik Aşamasında",Value ="Tedarik Aşamasında"},
+                    new SelectListItem { Text = "Üretim Aşamasında",Value ="Üretim Aşamasında"},
+                    new SelectListItem { Text = "Üretim Tamamlandı, Paketleme Bekliyor",Value ="Üretim Tamamlandı, Paketleme Bekliyor"},
+                    new SelectListItem { Text = "Kısmi Paketlendi",Value ="Kısmi Paketlendi"},
+                    new SelectListItem { Text = "Paketlendi",Value ="Paketlendi"},
+                }, "Value", "Text", ViewBag.DurumNow as string), new { style = "width:400px; text-align:center;", @class = "form-control" })
+                <br />
+                @Html.LabelFor(x => x.Not)
+                @Html.TextAreaFor(x => x.Not, new { style = "width:400px; text-align:center;", onkeypress = "javascript:return preventSpecialCharacters(event)", @class = "form-control" })
+                <br />
+                @Html.Label("Personel")
+                @Html.TextBox("Kullanici", (string)ViewBag.Kullanici, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                <br />
+                <button class="btn btn-primary">Kaydet</button>
+            </form>
+        </div>
+    </div>
+</div>
+

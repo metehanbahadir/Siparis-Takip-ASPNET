@@ -1,0 +1,39 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.Dosyalar 
+@{
+    ViewBag.Title = "Dosya Yükle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    window.onload = function () {
+        $('#DosyaYukleModal').modal('show');
+    }
+
+    setTimeout(function () {
+        document.getElementById('ResultMsg').style.display = 'none';
+    }, 5000);
+</script>
+@ViewBag.ID
+<div class="modal" id="DosyaYukleModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Dosya Yükle</h3>
+                <a href="/Siparis/Index" class="btn btn-primary"><i class="fa-solid fa-xmark"></i></a>
+            </div>
+            <form class="modal-body" action="/Siparis/DosyaYukle" method="post" enctype="multipart/form-data">
+                <span id="ResultMsg" style="color:red;">@ViewBag.Msg</span>
+                <br />
+                @Html.Label("Stok Kodu")
+                @Html.TextBox("StokKodu",(string)ViewBag.ID, new { style = "width:400px; text-align:center;", required="required", @class = "form-control" })
+                <br />
+                @Html.Label("Dosya")
+                @Html.TextBoxFor(x=>x.Dosya, new { style = "width:400px;", required="required", type = "file", @class = "form-control" })
+                <br />
+                <button class="btn btn-primary">Kaydet</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+

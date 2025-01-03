@@ -1,0 +1,58 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.GuncelSiparisler
+@{
+    ViewBag.Title = "Sipariş Detay";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    window.onload = function () {
+        $('#NotEkleModal').modal('show');
+    }
+</script>
+<div class="modal" id="NotEkleModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Not Ekle</h3>
+            </div>
+            <form class="modal-body" action="/Siparis/SiparisDuzenle" method="post">
+                <span style="color:red; font-size:17px; padding:5px 0 0 30px;">@ViewBag.Msg</span>
+                <br />
+                @Html.HiddenFor(x => x.UID)
+                @Html.LabelFor(x => x.Durum)
+                @Html.TextBoxFor(x => x.Durum, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                <br />
+                @Html.LabelFor(x => x.Durum)
+                @Html.DropDownList("SiparisDurumDDL",
+new List<SelectListItem>
+{
+ new SelectListItem
+ {
+     Text="Seçiniz",
+ },
+ new SelectListItem
+ {
+     Text="Tedarik aşamasında",
+ },
+ new SelectListItem
+ {
+     Text="Üretim aşamasında",
+ },
+ new SelectListItem
+{
+    Text="Kısmi Paketlendi",
+},
+ new SelectListItem
+ {
+     Text="Paketlendi",
+ },
+ }, new { style = "width:400px; text-align:center;", @class = "form-control" })
+                <br />
+                @Html.LabelFor(x => x.Not)
+                @Html.TextAreaFor(x => x.Not, new { style = "width:400px; text-align:center;", @class = "form-control" })
+                <br />
+                <button class="btn btn-primary">Kaydet</button>
+            </form>
+        </div>
+    </div>
+</div>
+

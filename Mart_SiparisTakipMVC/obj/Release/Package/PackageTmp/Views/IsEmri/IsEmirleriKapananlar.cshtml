@@ -1,0 +1,95 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.IsEmirleri>
+@{
+    ViewBag.Title = "Kapalı İş Emirleri";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    function oturumuKapat() {
+        $.ajax({
+            url: '/Giris/CikisYap', // Oturumu kapatma işlemini gerçekleştirecek MVC controller'ın URL'sini belirtin
+            type: 'POST',
+            dataType: 'json',
+        });
+    }
+
+    // Sekme kapatıldığında oturumu kapatma işlemi
+    window.onunload = function () {
+        oturumuKapat();
+    }
+</script>
+<br />
+<h2>Kapalı İş Emirleri - Toplam: <span style="color:blue;">@ViewBag.KapaliIsEmirleriCount</span><img style=" float:right; margin-right:100px; width:230px; height:50px;" src="~/Content/martrenklilogo.png" /></h2>
+<br />
+<div style="float:right; margin-right:1000px;">
+    @using (Html.BeginForm("KapaliIsEmriFiltre", "IsEmri", FormMethod.Get))
+    {
+        <div class="container">
+            @Html.TextBox("kapaliisemrifiltre", null, new { style = "width:250px; text-align:center; position: absolute; left: 40%; transform: translate(-50%, -50%);", title = "Cari, Stok Kodu, Ürün İsmi, Sipariş Cinsi, Durum, Not arayabilirsiniz", placeholder = "Sipariş Arayın", autocomplete = "off", @class = "form-control" })
+            @*<button type="submit">Ara</button>*@
+        </div>
+    }
+</div>
+<br />
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>İş Emri No</th>
+        <th>Ürün Kodu</th>
+        <th>Ürün İsmi <a style="float: right; padding-right:5px;" href="/IsEmri/KapaliIsEmriUrunTersAlfabetik"><i title="Ürüne Göre Ters Alfabetik Sırala" class="fa-solid fa-arrow-down"></i></a><a style="float: right; padding-right: 20px;" href="/IsEmri/KapaliIsEmriUrunAlfabetik"><i title="Ürüne Göre Alfabetik Sırala" class="fa-solid fa-arrow-up"></i></a></th>
+        <th>Üretilecek Miktar</th>
+        <th title="Planlanan Başlama Tarihi">P. Bşl. Tarihi</th>
+        <th title="Planlanan Bitiş Tarihi">P. Btş. Tarihi</th>
+        <th>İş Emri Tipi</th>
+        <th>Kapanış Tarihi</th>
+        <th>Gün Farkı</th>
+    </tr>
+    @foreach (var kapaliisemri in Model)
+    {
+        if (kapaliisemri.is_SorumlulukMerkezi == "70")
+        {
+            kapaliisemri.is_SorumlulukMerkezi = "SMD";
+        }
+        else if (kapaliisemri.is_SorumlulukMerkezi == "80")
+        {
+            kapaliisemri.is_SorumlulukMerkezi = "THT";
+        }
+        else
+        {
+            kapaliisemri.is_SorumlulukMerkezi = "Mekanik Montaj";
+        }
+
+        var gun = (Convert.ToDateTime(kapaliisemri.msg_S_0360) - Convert.ToDateTime(kapaliisemri.msg_S_0366)).Days;
+
+        if (Convert.ToDateTime(kapaliisemri.msg_S_0360) < Convert.ToDateTime(kapaliisemri.msg_S_0366))
+        {
+            <tr>
+                <td>@kapaliisemri.msg_S_0349</td>
+                <td>@kapaliisemri.msg_S_0352</td>
+                <td>@kapaliisemri.msg_S_0353</td>
+                <td>@kapaliisemri.msg_S_0354</td>
+                <td>@kapaliisemri.msg_S_0361.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@kapaliisemri.msg_S_0366.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@kapaliisemri.is_SorumlulukMerkezi</td>
+                <td>@kapaliisemri.msg_S_0360.Value.ToString("dd/MM/yyyy HH:mm")</td>
+                <td style="width:70px; text-align:center; background-color:red; color:white;">@gun</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>@kapaliisemri.msg_S_0349</td>
+                <td>@kapaliisemri.msg_S_0352</td>
+                <td>@kapaliisemri.msg_S_0353</td>
+                <td>@kapaliisemri.msg_S_0354</td>
+                <td>@kapaliisemri.msg_S_0361.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@kapaliisemri.msg_S_0366.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@kapaliisemri.is_SorumlulukMerkezi</td>
+                <td>@kapaliisemri.msg_S_0360.Value.ToString("dd/MM/yyyy HH:mm")</td>
+                <td style="width:70px; text-align:center;">@gun</td>
+            </tr>
+        }
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("IsEmirleriKapananlar", new { sayfa }))

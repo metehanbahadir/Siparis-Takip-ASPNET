@@ -1,0 +1,49 @@
+﻿@model List<Mart_SiparisTakipMVC.Models.Database.Gorevler>
+@{
+    ViewBag.Title = "Geçmiş Görevlerim";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<br />
+<h2>Geçmiş Görevlerim - Toplam: <span style="color:blue;">@ViewBag.GecmisGorevCount</span></h2>
+<br />
+<br />
+<p style="visibility:hidden">@ViewBag.PersonelID</p>
+<table class="table table-bordered">
+    <tr>
+        <th>Eklenme Tarihi</th>
+        <th>Görev</th>
+        <th>Başlama Tarihi</th>
+        <th>Bitiş Tarihi</th>
+        <th>Tamamlanma Tarihi</th>
+        <th>Atayan</th>
+        <th>Atanan1</th>
+        <th>Atanan2</th>
+        <th>Atanan3</th>
+        <th>Not</th>
+    </tr>
+    @foreach (var g in Model)
+    {
+        string not;
+        if (g.Not1 != null || g.Not2 != null || g.Not3 != null)
+        {
+            not = "Not Var";
+        }
+        else
+        {
+            not = "Not Yok";
+        }
+        <tr>
+            <td>@g.EklenmeTarih</td>
+            <td>@g.Gorev</td>
+            <td>@Convert.ToDateTime(g.Baslama_Tarihi).ToString("dd/MM/yyyy")</td>
+            <td>@Convert.ToDateTime(g.Bitis_Tarihi).ToString("dd/MM/yyyy")</td>
+            <td>@Convert.ToDateTime(g.Tamamlanma_Tarihi).ToString("dd/MM/yyyy")</td>
+            <td>@g.Atayan</td>
+            <td>@g.Atanan1</td>
+            <td>@g.Atanan2</td>
+            <td>@g.Atanan3</td>
+            <td>@not</td>
+            <td><a class="btn btn-primary" href="/Gorev/GecmisGorevDetay/@g.ID"><i class="fa-solid fa-eye"></i></a></td>
+        </tr>
+    }
+</table>

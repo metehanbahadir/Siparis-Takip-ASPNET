@@ -1,0 +1,73 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.Gorevler
+@{
+    ViewBag.Title = "Geçmiş Görev Detayı";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    window.onload = function () {
+        $('#GecmisGorevDetayModal').modal('show');
+    }
+</script>
+<p style="visibility:hidden;">@ViewBag.Atanan1</p>
+<p style="visibility:hidden;">@ViewBag.Atanan2</p>
+<p style="visibility:hidden;">@ViewBag.Atanan3</p>
+<p style="visibility:hidden;">@ViewBag.Atayan</p>
+<div class="modal" id="GecmisGorevDetayModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Geçmiş Görev Detayı</h3>
+                <a style="float:right;" href="/Gorev/GecmisGorevler" class="btn btn-primary"><i class="fa-solid fa-xmark"></i></a>
+            </div>
+            <form class="modal-body" action="/Siparis/SiparisDuzenle" method="post">
+                <span style="color:red; font-size:17px; padding:5px 0 0 30px;">@ViewBag.Msg</span>
+                <br />
+                @Html.HiddenFor(x => x.ID)
+                @Html.Label("Eklenme Tarihi")
+                @Html.TextBox("EklenmeTarihi",(string)ViewBag.EklenmeTarihi, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                <br />
+                @Html.Label("Görev")
+                @Html.TextAreaFor(x => x.Gorev, new { style = "width:400px; text-align:center;", disabled = "disabled", type = "date", @class = "form-control" })
+                <br />
+                @Html.Label("Başlama Tarihi")
+                @Html.TextBoxFor(x => x.Baslama_Tarihi, new { style = "text-align:center; width:400px;", type = "date", disabled = "disabled", @class = "form-control" })
+                <br />
+                @Html.Label("Bitiş Tarihi")
+                @Html.TextBoxFor(x => x.Bitis_Tarihi, new { style = "text-align:center; width:400px;", type = "date", disabled = "disabled", @class = "form-control" })
+                <br />
+                @Html.Label("Tamamlanma Tarihi")
+                @Html.TextBox("TamamlanmaTarihi",(string)ViewBag.TamamlanmaTarihi, new { style = "text-align:center; width:400px;", disabled = "disabled", @class = "form-control" })
+                <br />
+                @Html.Label("Atayan")
+                @Html.TextBoxFor(x => x.Atayan, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                <br />
+                @try
+                {
+                    @Html.Label("Atanan Personel 1")
+                    @Html.TextBoxFor(x => x.Atanan1, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                    <br />
+                    @Html.Label("Atanan Personel 2")
+                    @Html.TextBoxFor(x => x.Atanan2, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                    <br />
+                    @Html.Label("Atanan Personel 3")
+                    @Html.TextBoxFor(x => x.Atanan3, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                    <br />
+                    @Html.Label((string)ViewBag.Atayan)
+                    @Html.TextAreaFor(x => x.Not_Atayan, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                    <br />
+                    @Html.Label((string)ViewBag.Atanan1)
+                    @Html.TextAreaFor(x => x.Not1, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                    <br />
+                    @Html.Label((string)ViewBag.Atanan2)
+                    @Html.TextAreaFor(x => x.Not2, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                    <br />
+                    @Html.Label((string)ViewBag.atanan3)
+                    @Html.TextAreaFor(x => x.Not3, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                    <br />
+                }
+                catch { }
+            </form>
+        </div>
+    </div>
+</div>
+

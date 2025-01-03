@@ -1,0 +1,46 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.Kullanici
+@{
+    ViewBag.Title = "Kullanıcı Düzenle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<br />
+<h2>Kullanıcı Düzenle</h2>
+<br />
+<h4 style="color:red;">@ViewBag.Msg</h4>
+<br />
+@using (Html.BeginForm("KullaniciDuzenle", "Kullanici", FormMethod.Post))
+{
+    @Html.HiddenFor(x => x.KayitID)
+    @Html.LabelFor(x => x.Personel)
+    @Html.TextBoxFor(x => x.Personel, new { style = "width:400px; text-align:center;", autocomplete="off", @class = "form-control" })
+    <br />
+    @Html.LabelFor(x => x.Gorev)
+    @Html.TextBoxFor(x => x.Gorev, new { style = "width:400px; text-align:center;", autocomplete="off", @class = "form-control" })
+    <br />
+    @Html.LabelFor(x => x.Yetki)
+    @Html.DropDownList("KullaniciYetki", new SelectList(new[]
+{
+new SelectListItem { Text = "Seçiniz", Value ="Seçiniz"},
+new SelectListItem { Text = "Admin",Value ="1"},
+new SelectListItem { Text = "Yetkili",Value ="2"},
+new SelectListItem { Text = "Üretim Şefi",Value ="3"},
+new SelectListItem { Text = "SMD Sorumlusu",Value ="4"},
+new SelectListItem { Text = "THT İstasyonu",Value ="5"},
+new SelectListItem { Text = "SMD İstasyonu",Value ="6"},
+new SelectListItem { Text = "Müşteri",Value ="7"},
+new SelectListItem { Text = "Görüntüleme",Value ="8"},
+new SelectListItem { Text = "Görev Görüntüleme",Value ="9"},
+new SelectListItem { Text = "Diğer",Value ="10"},
+}, "Value", "Text", ViewBag.Yetki as string), new { style = "width:400px; text-align:center;", @class = "form-control" })
+    <br />
+    @Html.Label("E-Posta")
+    @Html.TextBoxFor(x => x.Mail, new { style = "width:400px; text-align:center;", autocomplete="off", disabled="disabled", @class = "form-control" })
+    <br />
+    @Html.LabelFor(x => x.KullaniciAdi)
+    @Html.TextBoxFor(x => x.KullaniciAdi, new { style = "width:400px; text-align:center;", autocomplete="off", disabled="disabled", @class = "form-control" })
+    <br />
+    @Html.LabelFor(x => x.Sifre)
+    @Html.TextBoxFor(x => x.Sifre, new { style = "width:400px; text-align:center;", autocomplete="off", @class = "form-control" })
+    <br />
+    <button class="btn btn-primary">Kaydet</button>
+}

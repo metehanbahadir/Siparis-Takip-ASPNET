@@ -1,0 +1,48 @@
+﻿@model List<float>
+
+@{
+    ViewBag.Title = "Rapor";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<br />
+<br />
+@using (Html.BeginForm("PieChartFiltre", "Siparis", FormMethod.Get))
+{    
+        @Html.DropDownList("PieChartFiltre", new SelectList(new[]
+        {
+        new SelectListItem { Text = "Seçiniz", Value="Seçiniz"},
+        new SelectListItem { Text = "Son 15 Gün", Value="Son 15 Gün"},
+        new SelectListItem { Text = "Son 1 Ay", Value="Son 1 Ay"},
+        new SelectListItem { Text = "Hepsi", Value="Hepsi"},
+        }, "Value", "Text", ViewBag.PieChartSecim as string), new { style = "float:left; width:400px; text-align:center;", @class = "form-control" })        
+        <button style="justify-content:right; display:inline-block; margin-left:10px;" class="btn btn-primary">Getir</button>    
+}
+<br />
+<br />
+<div style="width:600px; height:600px; margin-left:300px;">
+    <canvas id="pieChart"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    var data = @Html.Raw(Json.Encode(Model));
+    var ctx = document.getElementById('pieChart');
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ["Teslimatı P.Bitiş Tarihinden Sonra Yapılan Siparişler (%)", "Teslimatı P.Bitiş Tarihinden Önce Yapılan Siparişler (%)"],
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    'rgba(255, 0, 0)',
+                    'rgba(0, 128, 0)',
+                ],
+                borderColor: [
+                    'rgba(0, 0, 0)',
+                    'rgba(0, 0, 0)',
+                ],
+                borderWidth: 0.3
+            }],
+        },
+    });
+    </script>
+</div>
+

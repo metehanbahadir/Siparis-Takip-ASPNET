@@ -1,0 +1,51 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.Gorevler>
+@{
+    ViewBag.Title = "Görevler";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<br />
+<h2>Görevler - Toplam: <span style="color:blue;">@ViewBag.TumGorevlerCount</span></h2>
+<br />
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th style="width:105px;">Eklenme Tarihi</th>
+        <th>Görev</th>
+        <th style="width:105px;">Başlama Tarihi</th>
+        <th style="width:105px;">Bitiş Tarihi</th>
+        <th style="width:120px;">Atayan</th>
+        <th style="width:120px;">Atanan1</th>
+        <th style="width:120px;">Atanan2</th>
+        <th style="width:120px;">Atanan3</th>
+        <th>Not</th>
+    </tr>
+    @foreach (var g in Model)
+    {
+        string not;
+        if (g.Not1 != null || g.Not2 != null || g.Not3 != null || g.Not_Atayan != null)
+        {
+            not = "Not Var";
+        }
+        else
+        {
+            not = "Not Yok";
+        }
+        <tr>
+            <td>@g.EklenmeTarih</td>
+            <td>@g.Gorev</td>
+            <td>@Convert.ToDateTime(g.Baslama_Tarihi).ToString("dd/MM/yyyy")</td>
+            <td>@Convert.ToDateTime(g.Bitis_Tarihi).ToString("dd/MM/yyyy")</td>
+            <td>@g.Atayan</td>
+            <td>@g.Atanan1</td>
+            <td>@g.Atanan2</td>
+            <td>@g.Atanan3</td>
+            <td>@not</td>
+        </tr>
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa }))
+
+

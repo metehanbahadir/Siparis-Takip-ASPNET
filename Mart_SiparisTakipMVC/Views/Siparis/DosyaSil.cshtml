@@ -1,0 +1,60 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.Dosyalar
+@{
+    ViewBag.Title = "Dosya Sil";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    window.onload = function () {
+        $('#DosyaSilModal').modal('show');
+    }
+
+    setTimeout(function () {
+        document.getElementById('ResultMsg').style.display = 'none';
+    }, 5000);
+
+    setTimeout(function () {
+        document.getElementById('ResultErrorMsg').style.display = 'none';
+    }, 5000);
+</script>
+<div class="modal" id="DosyaSilModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Dosya Sil</h3>
+                <a href="/Siparis/Index" class="btn btn-primary"><i class="fa-solid fa-xmark"></i></a>
+            </div>
+            <form class="modal-body" action="/Siparis/DosyaSil" method="post">
+                <span id="ResultErrorMsg" style="color:red;">@ViewBag.DosyaYokMsg</span><span id="ResultMsg" style="color:green;">@ViewBag.BasariMsg</span>
+                <br />
+                @Html.Label("Stok Kodu")
+                @Html.TextBoxFor(X => X.sip_stok_kod, new { style = "width:400px; text-align:center;", required = "required", @class = "form-control" })
+                <br />
+                @Html.DropDownList("FileExtDDL",
+                  new List<SelectListItem> {
+                      new SelectListItem {
+                         Text="Seçiniz",
+                      },
+                      new SelectListItem {
+                         Text=".html",
+                      },
+                      new SelectListItem {
+                         Text=".pdf",
+                      },
+                      new SelectListItem {
+                         Text=".png",
+                      },
+                      new SelectListItem {
+                        Text=".zip",
+                      },
+                      new SelectListItem {
+                      Text=".docx",
+                      },
+                  }, new { style = "width:400px; text-align:center;", @class = "form-control" })
+                <br />
+                <button class="btn btn-primary">Sil</button>
+            </form>
+        </div>
+    </div>
+</div>
+

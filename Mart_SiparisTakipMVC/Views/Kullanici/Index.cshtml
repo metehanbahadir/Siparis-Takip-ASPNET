@@ -1,0 +1,106 @@
+﻿@model List<Mart_SiparisTakipMVC.Models.Database.Kullanici>
+@{
+    ViewBag.Title = "Kullanıcılar";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    function oturumuKapat() {
+        $.ajax({
+            url: '/Giris/CikisYap', // Oturumu kapatma işlemini gerçekleştirecek MVC controller'ın URL'sini belirtin
+            type: 'POST',
+            dataType: 'json',
+        });
+    }
+
+    // Sekme kapatıldığında oturumu kapatma işlemi
+    window.onunload = function () {
+        oturumuKapat();
+    }
+</script>
+<br />
+<h3>Kullanıcılar: <span style="color:blue;">@ViewBag.KullaniciCount</span></h3>
+<br />
+@if (Session["Gorev"] as string == "Genel Müdür" || Session["Gorev"] as string == "Üretim Müdürü")
+{
+    <a class="btn btn-primary" href="/Kullanici/YeniKullanici"><i style="color:white;" class="fa-solid fa-plus"></i></a>
+    <br />
+    <br />
+}
+else
+{
+}
+<table class="table table-bordered table-hover table-responsive-xxl" style="width:75%">
+    <tr>
+        <th>Personel</th>
+        <th>Görev</th>
+        <th>E-Posta</th>
+        <th>Kullanıcı Adı</th>
+        <th>Şifre</th>
+        <th colspan="2">İşlem</th>
+    </tr>
+    @foreach (var user in Model)
+    {
+        if (User.IsInRole("1") || (User.IsInRole("2") && Session["Gorev"] as string == "Üretim Müdürü"))
+        {
+            if (Session["KullaniciAdi"] as string == user.KullaniciAdi)
+            {
+                <tr class="bg-warning">
+                    <td>@user.Personel</td>
+                    <td>@user.Gorev</td>
+                    <td>@user.Mail</td>
+                    <td>@user.KullaniciAdi</td>
+                    <td>@user.Sifre</td>
+                    <td style="background-color:white;"><a style="color: white;" class="btn btn-warning" href="/Kullanici/KullaniciGetir/@user.KayitID"><i class="fa-solid fa-pen"></i></a></td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>@user.Personel</td>
+                    <td>@user.Gorev</td>
+                    <td>@user.Mail</td>
+                    <td>@user.KullaniciAdi</td>
+                    <td>@user.Sifre</td>
+                    <td style="background-color:white;"><a style="color: white;" class="btn btn-warning" href="/Kullanici/KullaniciGetir/@user.KayitID"><i class="fa-solid fa-pen"></i></a></td>
+                    <td style="background-color:white;"><a class="btn btn-danger" href="/Kullanici/KullaniciSil/@user.KayitID"><i class="fa-solid fa-xmark"></i></a></td>
+                </tr>
+            }
+        }
+        else if (User.IsInRole("2") && Session["Gorev"] as string == "Üretim Müdürü")
+        {
+            <tr>
+                <td>@user.Personel</td>
+                <td>@user.Gorev</td>
+                <td>@user.Mail</td>
+                <td>@user.KullaniciAdi</td>
+                <td>@user.Sifre</td>
+                <td style="background-color:white;"><a style="color: white;" class="btn btn-warning" href="/Kullanici/KullaniciGetir/@user.KayitID"><i class="fa-solid fa-pen"></i></a></td>
+            </tr>
+        }
+        else
+        {
+            if (Session["KullaniciAdi"] as string == user.KullaniciAdi)
+            {
+                <tr class="bg-warning">
+                    <td>@user.Personel</td>
+                    <td>@user.Gorev</td>
+                    <td>@user.Mail</td>
+                    <td>@user.KullaniciAdi</td>
+                    <td>@user.Sifre</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td>@user.Personel</td>
+                    <td>@user.Gorev</td>
+                    <td>@user.Mail</td>
+                    <td>@user.KullaniciAdi</td>
+                    <td>@user.Sifre</td>
+                </tr>
+            }
+        }
+    }
+</table>
+

@@ -1,0 +1,117 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.GecmisSiparisHareket>
+@{
+    ViewBag.Title = "Geçmiş Sipariş Hareketleri";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    function oturumuKapat() {
+        $.ajax({
+            url: '/Giris/CikisYap', // Oturumu kapatma işlemini gerçekleştirecek MVC controller'ın URL'sini belirtin
+            type: 'POST',
+            dataType: 'json',
+        });
+    }
+
+    // Sekme kapatıldığında oturumu kapatma işlemi
+    window.onunload = function () {
+        oturumuKapat();
+    }
+</script>
+<br />
+<h3>Personel: <span style="color:blue;">@ViewBag.Personel</span> - Siparişler: <span style="color:blue;">@ViewBag.GecmisCount</span></h3>
+<br />
+<a title="Ters Sıralama" style="margin-left:10px;" href="/GecmisSiparisHareket/TersSiralama" class="btn btn-primary"><i class="fa-solid fa-sort"></i></a>
+<div style="float:right; margin-right:1000px;">
+    @using (Html.BeginForm("SiparisFiltrele", "GecmisSiparisHareket", FormMethod.Get))
+    {
+        @Html.TextBox("siparisfiltre", null, new { style = "width:250px; text-align:center;", placeholder = "Sipariş Arayın", autocomplete = "off", @class = "form-control" })
+        @*<button type="submit">Ara</button>*@
+    }
+</div>
+<br />
+<br />
+<table class="table table-bordered" style="width:100%;">
+    <tr>
+        <th>Tarih</th>
+        <th style="width:180px;">Cari Adı <a style="float: right; padding-right:5px;" href="/GecmisSiparisHareket/CariTersAlfabetik"><i title="Müşteriye Göre Ters Alfabetik Sırala" class="fa-solid fa-arrow-down"></i></a><a style="float: right; padding-right: 20px;" href="/GecmisSiparisHareket/CariAlfabetik"><i title="Müşteriye Göre Alfabetik Sırala" class="fa-solid fa-arrow-up"></i></a></th>
+        <th style="width:100px;">Seri - Sıra No</th>
+        <th>Stok Kodu</th>
+        <th>Ürün İsmi <a style="float: right; padding-right: 5px;" href="/GecmisSiparisHareket/UrunTersAlfabetik"><i title="Ürüne Göre Ters Alfabetik Sırala" class="fa-solid fa-arrow-down"></i></a><a style="float: right; padding-right: 20px;" href="/GecmisSiparisHareket/UrunAlfabetik"><i title="Ürüne Göre Alfabetik Sırala" class="fa-solid fa-arrow-up"></i></a></th>
+        <th>Belge No</th>
+        <th>Teslim Tarihi</th>
+        <th style="width:80px;">Cinsi</th>
+        <th style="width:60px;">Sipariş Miktar</th>
+        <th title="Tamamlanan Miktar" style="width:50px;">Tmm. Miktar</th>
+        <th title="Kalan Miktar" style="width:60px;">Kalan</th>
+        <th>Durum</th>
+        <th style="width:200px;">Not</th>
+        <th>Kullanıcı</th>
+    </tr>
+    @foreach (var orders in Model)
+    {
+        orders.sip_evrakno_seri = orders.sip_evrakno_seri + " - " + orders.sip_evrakno_sira;
+
+        if (orders.sip_cins == "0")
+        {
+            orders.sip_cins = "Normal";
+        }
+        else if (orders.sip_cins == "1")
+        {
+            orders.sip_cins = "Konsinye Sipariş";
+        }
+        else if (orders.sip_cins == "2")
+        {
+            orders.sip_cins = "Proforma Sipariş";
+        }
+        else if (orders.sip_cins == "3")
+        {
+            orders.sip_cins = "İthalat/İhracat";
+        }
+        else if (orders.sip_cins == "4")
+        {
+            orders.sip_cins = "Fason Sipariş";
+        }
+        else if (orders.sip_cins == "5")
+        {
+            orders.sip_cins = "Dahili Sarf Siparişi";
+        }
+        else if (orders.sip_cins == "6")
+        {
+            orders.sip_cins = "Depolar Arası Sipariş";
+        }
+        else if (orders.sip_cins == "7")
+        {
+            orders.sip_cins = "Satın Alma Talebi";
+        }
+        else if (orders.sip_cins == "8")
+        {
+            orders.sip_cins = "Üretim Talebi";
+        }
+        else
+        {
+            orders.sip_cins = "İş Emirleri";
+        }
+
+        <tr>
+            <td>@orders.Tarih</td>
+            <td>@orders.cari_unvan</td>
+            <td>@orders.sip_evrakno_seri</td>
+            <td>@orders.sip_stok_kod</td>
+            <td>@orders.sto_isim</td>
+            <td>@orders.sip_belge_no</td>
+            <td>@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")</td>
+            <td>@orders.sip_cins</td>
+            <td>@orders.sip_miktar</td>
+            <td>@orders.sip_teslim_miktar</td>
+            <td>@orders.Teslimden_Kalan</td>
+            <td>@orders.Durum</td>
+            <td>@orders.Not</td>
+            <td>@orders.Kullanici</td>
+        </tr>
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa }))
+

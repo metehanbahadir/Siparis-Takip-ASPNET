@@ -1,0 +1,106 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.IsEmirleri>
+@{
+    ViewBag.Title = "SMD İş Emirleri";
+    Layout = "~/Views/Shared/_ViewerLayout.cshtml";
+}
+<script>
+    function oturumuKapat() {
+        $.ajax({
+            url: '/Giris/CikisYap', // Oturumu kapatma işlemini gerçekleştirecek MVC controller'ın URL'sini belirtin
+            type: 'POST',
+            dataType: 'json',
+        });
+    }
+
+    // Sekme kapatıldığında oturumu kapatma işlemi
+    window.onunload = function () {
+        oturumuKapat();
+    }    
+</script>
+<br />
+<h3>SMD İş Emirleri - Toplam: <span style="color:blue;">@ViewBag.SmdIsEmirleriCount</span><img style=" float:right; margin-right:50px; width:230px; height:50px;" src="~/Content/martrenklilogo.png" /></h3>
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>İş Emri No</th>
+        <th>Ürün Kodu</th>
+        <th>Ürün İsmi</th>
+        <th style="width:80px;">Üretilecek</th>
+        <th style="width:100px;">Üretilen</th>
+        <th style="width:80px;">Kalan</th>
+        <th title="Planlanan Başlama Tarihi">P. Bşl. Tarihi</th>
+        <th title="Planlanan Bitiş Tarihi">P. Bitiş Tarihi</th>
+        <th title="İş Emri Tipi">Tipi</th>
+        <th style="width:70px;">Kalan Gün</th>
+        <th style="width:200px;">Not</th>
+    </tr>
+    @foreach (var smd in Model)
+    {
+        var kalangun = (Convert.ToDateTime(smd.msg_S_0366) - Convert.ToDateTime(System.DateTime.Today)).Days;
+
+        smd.is_SorumlulukMerkezi = "SMD";
+        if (smd.msg_S_0390 == "")
+        {
+            smd.msg_S_0390 = "Mart Elektronik";
+        }
+        else
+        {
+            smd.msg_S_0390 = smd.msg_S_0390;
+        }
+
+        if (smd.msg_S_0366 < System.DateTime.Today)
+        {
+            <tr class="bg-danger">
+                <td style="color:white;">@smd.msg_S_0349</td>
+                <td style="color:white;">@smd.msg_S_0352</td>
+                <td style="color:white;">@smd.msg_S_0353</td>
+                <td style="color:white;">@smd.msg_S_0354</td>
+                <td style="color:white;">@smd.msg_S_0080</td>
+                <td style="color:white;">@smd.msg_S_0247</td>
+                <td style="color:white;">@smd.msg_S_0361.ToString("dd/MM/yyyy")</td>
+                <td style="color:white;">@smd.msg_S_0366.ToString("dd/MM/yyyy")</td>
+                <td style="color:white;">@smd.is_SorumlulukMerkezi</td>
+                <td style="color:white;">@kalangun</td>
+                <td style="color:white;">@smd.Not</td>
+            </tr>
+        }
+
+        else if ((smd.msg_S_0366 - System.DateTime.Today).TotalDays <= 7)
+        {
+            <tr class="bg-warning">
+                <td style="color:black;">@smd.msg_S_0349</td>
+                <td style="color:black;">@smd.msg_S_0352</td>
+                <td style="color:black;">@smd.msg_S_0353</td>
+                <td style="color:black;">@smd.msg_S_0354</td>
+                <td style="color:black;">@smd.msg_S_0080</td>
+                <td style="color:black;">@smd.msg_S_0247</td>
+                <td style="color:black;">@smd.msg_S_0361.ToString("dd/MM/yyyy")</td>
+                <td style="color:black;">@smd.msg_S_0366.ToString("dd/MM/yyyy")</td>
+                <td style="color:black;">@smd.is_SorumlulukMerkezi</td>
+                <td style="color:black;">@kalangun</td>
+                <td style="color:black;">@smd.Not</td>
+            </tr>
+        }
+
+        else
+        {
+            <tr>
+                <td>@smd.msg_S_0349</td>
+                <td>@smd.msg_S_0352</td>
+                <td>@smd.msg_S_0353</td>
+                <td>@smd.msg_S_0354</td>
+                <td>@smd.msg_S_0080</td>
+                <td>@smd.msg_S_0247</td>
+                <td>@smd.msg_S_0361.ToString("dd/MM/yyyy")</td>
+                <td>@smd.msg_S_0366.ToString("dd/MM/yyyy")</td>
+                <td>@smd.is_SorumlulukMerkezi</td>
+                <td>@kalangun</td>
+                <td>@smd.Not</td>
+            </tr>
+        }
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("SMDIsEmriViewer", new { sayfa }))
+

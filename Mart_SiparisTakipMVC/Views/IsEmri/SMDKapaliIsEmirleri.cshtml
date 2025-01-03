@@ -1,0 +1,44 @@
+﻿@model List<Mart_SiparisTakipMVC.Models.Database.IsEmirleri>
+@{
+    ViewBag.Title = "SMD Kapalı İş Emirleri";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<br />
+<h2>SMD Kapalı İş Emirleri - Toplam: <span style="color:blue;">@ViewBag.SMDKapaliIsEmriCount</span></h2>
+<br />
+<div style="float:right; margin-right:1000px;">
+    @using (Html.BeginForm("SMDKapaliIsEmriFiltre", "IsEmri", FormMethod.Get))
+    {
+        <div class="container">
+            @Html.TextBox("query", null, new { style = "width:250px; text-align:center; position: absolute; left: 40%; transform: translate(-50%, -50%);", title = "Cari, Stok Kodu, Ürün İsmi, Sipariş Cinsi, Durum, Not arayabilirsiniz", placeholder = "Sipariş Arayın", autocomplete = "off", @class = "form-control" })
+            @*<button type="submit">Ara</button>*@
+        </div>
+    }
+</div>
+<br />
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>İş Emri No</th>
+        <th>Ürün Kodu</th>
+        <th>Ürün İsmi</th>
+        <th>Üretim Miktarı</th>
+        <th>P. Bşl. T.</th>
+        <th>P. Btş. T.</th>        
+        <th>Durumu</th>        
+        <th>Kapanış Tarihi</th>
+    </tr>
+    @foreach (var isemri in Model)
+    {
+        <tr>
+            <td>@isemri.msg_S_0349</td>
+            <td><a href="/Siparis/SiparisRecetesi/@isemri.msg_S_0352" style="text-decoration:underline;">@isemri.msg_S_0352</a></td>
+            <td>@isemri.msg_S_0353</td>
+            <td>@isemri.msg_S_0354</td>
+            <td>@isemri.msg_S_0361</td>
+            <td>@isemri.msg_S_0366</td>
+            <td>@isemri.msg_S_0355</td>
+            <td>@isemri.msg_S_0360</td>
+        </tr>
+    }
+</table>

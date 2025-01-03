@@ -1,0 +1,92 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.GuncelSiparisler>
+@{
+    ViewBag.Title = ViewBag.Title;
+    Layout = "~/Views/Shared/MusteriLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    function oturumuKapat() {
+        $.ajax({
+            url: '/Giris/CikisYap', // Oturumu kapatma işlemini gerçekleştirecek MVC controller'ın URL'sini belirtin
+            type: 'POST',
+            dataType: 'json',
+        });
+    }
+
+    // Sekme kapatıldığında oturumu kapatma işlemi
+    window.onunload = function () {
+        oturumuKapat();
+    }
+</script>
+<br />
+<a style="float:right; margin-right:5px; border-radius:10px;" href="/Siparis/MusteriSiparisIndexEng" title="English"><img style="width:30px; height:20px;" src="~/Content/ukflag.png" /></a><a href="/Siparis/MusteriSiparisIndex" style="float:right; margin-right:5px; border-radius:10px;" title="Türkçe"><img style="width:30px; height:20px;" src="~/Content/trflag.png" /></a>
+<h2>Orders - <span style="color:blue;">@ViewBag.Musteri</span><img style=" float:right; margin-right:150px; width:250px; height:60px;" src="~/Content/martrenklilogo.png" /></h2>
+<br />
+<br />
+<a style="float:left; margin-right:5px; color:white;" onclick="location.href='@Url.Action("MusteriSiparisleriExcelEng","Siparis")'" class="btn btn-success" title="Save as Excel"><i class="fa-solid fa-file-excel"></i></a>
+<br />
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>Document Number</th>
+        <th>Order No</th>
+        <th>Product ID</th>
+        <th>Product Name</th>
+        <th style="width:100px;">Order Quantity</th>
+        <th style="width:100px;">Deliveried Quantity</th>
+        <th style="width:100px;">Open Quantity</th>
+        <th style="width:140px;">Scheduled Delivery Date</th>
+        <th>Status</th>
+    </tr>
+    @foreach (var siparis in Model)
+    {
+        siparis.sip_evrakno_seri = siparis.sip_evrakno_seri + siparis.sip_evrakno_sira;
+        if (siparis.Durum == "Tedarik Aşamasında")
+        {
+            siparis.Durum = "In The Supply";
+        }
+        else if (siparis.Durum == "Askıya Alındı")
+        {
+            siparis.Durum = "Suspended";
+        }
+        else if (siparis.Durum == "Üretim Aşamasında")
+        {
+            siparis.Durum = "In The Production";
+        }
+        else if (siparis.Durum == "Üretim Tamamlandı, Paketleme Bekliyor")
+        {
+            siparis.Durum = "Production Completed, Waiting For Packaging";
+        }
+        else if (siparis.Durum == "Kısmi Paketlendi")
+        {
+            siparis.Durum = "Partial Packed";
+        }
+        else if (siparis.Durum == "Paketlendi")
+        {
+            siparis.Durum = "Packed";
+        }
+        else if (siparis.Durum == "İşleme Alındı")
+        {
+            siparis.Durum = "Order Received";
+        }
+        else
+        {
+            siparis.Durum = siparis.Durum;
+        }
+        <tr>
+            <td>@siparis.sip_evrakno_seri</td>
+            <td>@siparis.sip_belge_no</td>
+            <td>@siparis.sip_stok_kod</td>
+            <td>@siparis.sto_isim</td>
+            <td>@siparis.sip_miktar</td>
+            <td>@siparis.sip_teslim_miktar</td>
+            <td>@siparis.Teslimden_Kalan</td>
+            <td>@siparis.sip_teslim_tarih.ToString("dd/MM/yyyy")</td>
+            <td>@siparis.Durum</td>
+        </tr>
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa }))
+

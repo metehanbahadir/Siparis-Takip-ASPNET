@@ -1,0 +1,60 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.GuncelSiparisler>
+@{
+    ViewBag.Title = ViewBag.Title;
+    Layout = "~/Views/Shared/MusteriLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    function oturumuKapat() {
+        $.ajax({
+            url: '/Giris/CikisYap', // Oturumu kapatma işlemini gerçekleştirecek MVC controller'ın URL'sini belirtin
+            type: 'POST',
+            dataType: 'json',
+        });
+    }
+
+    // Sekme kapatıldığında oturumu kapatma işlemi
+    window.onunload = function () {
+        oturumuKapat();
+    }
+</script>
+<br />
+<a style="float:right; margin-right:5px; border-radius:20px;" href="/Siparis/MusteriSiparisIndexEng" title="English"><img style="width:30px; height:20px;" src="~/Content/ukflag.png" /></a><a href="/Siparis/MusteriSiparisIndex" style="float:right; margin-right:5px; border-radius:20px;" title="Türkçe"><img style="width:30px; height:20px;" src="~/Content/trflag.png" /></a>
+<h2>Siparişlerim - <span style="color:blue;">@ViewBag.Musteri</span><img style=" float:right; margin-right:150px; width:250px; height:60px;" src="~/Content/martrenklilogo.png" /></h2>
+<br />
+<br />
+<a style="float:left; margin-right:5px; color:white;" onclick="location.href='@Url.Action("MusteriSiparisleriExcel","Siparis")'" class="btn btn-success" title="Excel Döküm Al"><i class="fa-solid fa-file-excel"></i></a>
+<br />
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>Seri-Sıra No</th>
+        <th>Sipariş No</th>
+        <th>Stok No</th>
+        <th>Ürün İsmi</th>
+        <th style="width:100px;">Sipariş Miktarı</th>
+        <th style="width:100px;">Teslim Edilen Miktar</th>
+        <th style="width:100px;">Kalan Miktar</th>
+        <th style="width:150px;">Planlanan Teslim Tarihi</th>
+        <th>Durum</th>
+    </tr>
+    @foreach (var siparis in Model)
+    {
+        siparis.sip_evrakno_seri = siparis.sip_evrakno_seri + siparis.sip_evrakno_sira;
+        <tr>
+            <td>@siparis.sip_evrakno_seri</td>
+            <td>@siparis.sip_belge_no</td>
+            <td>@siparis.sip_stok_kod</td>
+            <td>@siparis.sto_isim</td>
+            <td>@siparis.sip_miktar</td>
+            <td>@siparis.sip_teslim_miktar</td>
+            <td>@siparis.Teslimden_Kalan</td>
+            <td>@siparis.sip_teslim_tarih.ToString("dd/MM/yyyy")</td>
+            <td>@siparis.Durum</td>
+        </tr>
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa }))
+

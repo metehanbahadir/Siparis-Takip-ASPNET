@@ -1,0 +1,52 @@
+﻿@model List<Mart_SiparisTakipMVC.Models.Database.GorevDosyalari>
+@{
+    ViewBag.Title = "Göreve Eklenen Dosyalar";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    window.onload = function () {
+        $('#GorevDosyalariModal').modal('show');
+    }
+</script>
+<br />
+<div class="modal" id="GorevDosyalariModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Görev: <span style="color:blue;">@ViewBag.Gorev</span></h3>
+                @if (ViewBag.AtayanID == Session["KullaniciAdi"] as string)
+                {
+                    <a href="/Gorev/GorevGetir/@ViewBag.GorevGetirID" class="btn btn-primary" title="Görevlere Geri Dön">X</a>
+                }
+                else
+                {
+                    <a href="/Gorev/BanaAtanmisGorevGetir/@ViewBag.ID" class="btn btn-primary" title="Görevlere Geri Dön">X</a>
+                }
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    @foreach (var dosya in Model)
+                    {
+                        var dosyayolu = Path.GetFileNameWithoutExtension(dosya.DosyaYolu);
+                        if (dosya.EkleyenPersonelID == Session["KullaniciAdi"] as string)
+                        {
+                            <tr>
+                                <td><a href="@Url.Action("DosyaIndir", "Gorev", new { gorevid = dosya.GorevID, id = dosya.ID })">@dosyayolu</a></td>
+                                <td>@dosya.EkleyenPersonel</td>
+                                <td><a href="/Gorev/DosyaSil/@dosya.ID" class="btn btn-danger">Sil</a></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td><a href="@Url.Action("DosyaIndir", "Gorev", new { gorevid = dosya.GorevID, id = dosya.ID })">@dosyayolu</a></td>
+                                <td>@dosya.EkleyenPersonel</td>                                
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,65 @@
+﻿@model List<Mart_SiparisTakipMVC.Models.Database.Dosyalar>
+@{
+    ViewBag.Title = "Dosya Seç";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    window.onload = function () {
+        $('#DosyaSecModal').modal('show');
+    }
+</script>
+@if ((User.IsInRole("1")) || (User.IsInRole("2")))
+{
+    <div class="modal" id="DosyaSecModal">
+        <div class="modal-dialog" style="width:700px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Dosya: <span style="color:blue;">@ViewBag.ID</span></h3>
+                </div>
+                <div class="container">
+                    <br />
+                    @foreach (var d in Model)
+                    {
+                        var dosya = Path.GetFileNameWithoutExtension(d.Dosya);
+                        <table class="table table-hover">
+                            <tr>
+                                <td>@Html.ActionLink(dosya, "DosyaIndir", new { id = d.sip_stok_kod, name = d.Dosya })</td>
+                                <td>@Html.ActionLink("Sil", "DosyaSil", new { id = d.ID}, new { style = "color:white;", @class = "btn btn-danger", onclick = "return confirm('Silmek istediğinize emin misiniz?')" })</td>                                
+                            </tr>
+                        </table>
+                    }
+                    <br />
+                    <a href="/Siparis/DosyaYukle/@ViewBag.ID" style="float:left; margin-left:5px;" class="btn btn-primary">Dosya Yükle</a>
+                    <br />
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="modal" id="DosyaSecModal">
+        <div class="modal-dialog" style="width:700px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Dosya: <span style="color:blue;">@ViewBag.ID</span></h3>
+                </div>
+                <div class="container">
+                    <br />
+                    @foreach (var d in Model)
+                    {
+                        var dosya = Path.GetFileNameWithoutExtension(d.Dosya);
+                        <table class="table table-hover">
+                            <tr>
+                                <td>@Html.ActionLink(dosya, "DosyaIndir", new { id = d.sip_stok_kod, name = d.Dosya })</td>                              
+                            </tr>
+                        </table>
+                    }
+                    <br />                   
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

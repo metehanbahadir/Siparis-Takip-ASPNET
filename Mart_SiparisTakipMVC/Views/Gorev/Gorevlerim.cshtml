@@ -1,0 +1,87 @@
+﻿@model List<Mart_SiparisTakipMVC.Models.Database.Gorevler>
+@{
+    ViewBag.Title = "Kendi Görevlerim";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<br />
+<h3>Görevlerim - <span style="color:blue;">@ViewBag.Personel</span></h3>
+<br />
+<a class="btn btn-primary" style="color:white;" onclick="location.href='@Url.Action("YeniGorev","Gorev")'"><i class="fa-solid fa-plus"></i></a>
+<br />
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>Görev</th>
+        <th style="width:105px;">Başlama Tarihi</th>
+        <th style="width:105px;">Bitiş Tarihi</th>
+        <th style="width:120px;">Atanan 1</th>
+        <th style="width:120px;">Atanan 2</th>
+        <th style="width:120px;">Atanan 3</th>
+        <th style="width:120px;">Not</th>
+        <th style="width:100px;">Kalan Gün</th>
+        <th colspan="3" style="width:110px;">İşlemler</th>
+    </tr>
+    @foreach (var kg in Model)
+    {
+        var kalangun = (Convert.ToDateTime(kg.Bitis_Tarihi) - Convert.ToDateTime(System.DateTime.Today)).Days;
+
+        if (kg.Not1 != null)
+        {
+            kg.Not1 = "Not Var";
+        }
+        else
+        {
+            kg.Not1 = "Not Yok";
+        }
+
+        if (Convert.ToDateTime(kg.Bitis_Tarihi) < Convert.ToDateTime(System.DateTime.Today))
+        {
+            <tr>
+                <td style="color:white;" class="bg-danger">@kg.Gorev</td>
+                <td style="color:white;" class="bg-danger">@Convert.ToDateTime(kg.Baslama_Tarihi).ToString("dd/MM/yyyy")</td>
+                <td style="color:white;" class="bg-danger">@Convert.ToDateTime(kg.Bitis_Tarihi).ToString("dd/MM/yyyy")</td>
+                <td style="color:white;" class="bg-danger">@kg.Atanan1</td>
+                <td style="color:white;" class="bg-danger">@kg.Atanan2</td>
+                <td style="color:white;" class="bg-danger">@kg.Atanan3</td>
+                <td style="color:white;" class="bg-danger">@kg.Not1</td>
+                <td style="color:white;" class="bg-danger">@kalangun</td>
+                <td style="width:40px; color:white;"><a href="/Gorev/GorevGetir/@kg.ID" class="btn btn-primary" title="Düzenle"><i class="fa-solid fa-pen"></i></a></td>
+                <td style="width:70px; color:white;"><a href="/Gorev/GorevTamamla/@kg.ID" style="color:white;" title="Tamamla" class="btn btn-success" onclick="return confirm('Görev tamamlanacaktır, Onaylıyor musunuz?')"><i class="fa-solid fa-check"></i></a></td>
+                <td style="width:70px; color:white;"><a href="/Gorev/GorevSil/@kg.ID" style="color:white;" title="Sil" class="btn btn-danger" onclick="return confirm('Görev silinecektir, Onaylıyor musunuz?')"><i class="fa-solid fa-xmark"></i></a></td>
+            </tr>
+        }
+        else if (Convert.ToDateTime(kg.Bitis_Tarihi) == Convert.ToDateTime(System.DateTime.Today))
+        {
+            <tr>
+                <td class="bg-warning">@kg.Gorev</td>
+                <td class="bg-warning">@Convert.ToDateTime(kg.Baslama_Tarihi).ToString("dd/MM/yyyy")</td>
+                <td class="bg-warning">@Convert.ToDateTime(kg.Bitis_Tarihi).ToString("dd/MM/yyyy")</td>
+                <td class="bg-warning">@kg.Atanan1</td>
+                <td class="bg-warning">@kg.Atanan2</td>
+                <td class="bg-warning">@kg.Atanan3</td>
+                <td class="bg-warning">@kg.Not1</td>
+                <td class="bg-warning">@kalangun</td>
+                <td style="width:40px;"><a href="/Gorev/GorevGetir/@kg.ID" class="btn btn-primary" title="Düzenle"><i class="fa-solid fa-pen"></i></a></td>
+                <td style="width:70px;"><a href="/Gorev/GorevTamamla/@kg.ID" style="color:white;" title="Tamamla" class="btn btn-success" onclick="return confirm('Görev tamamlanacaktır, Onaylıyor musunuz?')"><i class="fa-solid fa-check"></i></a></td>
+                <td style="width:70px;"><a href="/Gorev/GorevSil/@kg.ID" style="color:white;" title="Sil" class="btn btn-danger" onclick="return confirm('Görev silinecektir, Onaylıyor musunuz?')"><i class="fa-solid fa-xmark"></i></a></td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>@kg.Gorev</td>
+                <td>@Convert.ToDateTime(kg.Baslama_Tarihi).ToString("dd/MM/yyyy")</td>
+                <td>@Convert.ToDateTime(kg.Bitis_Tarihi).ToString("dd/MM/yyyy")</td>
+                <td>@kg.Atanan1</td>
+                <td>@kg.Atanan2</td>
+                <td>@kg.Atanan3</td>
+                <td>@kg.Not1</td>
+                <td>@kalangun</td>
+                <td style="width:40px;"><a href="/Gorev/GorevGetir/@kg.ID" class="btn btn-primary" title="Düzenle"><i class="fa-solid fa-pen"></i></a></td>
+                <td style="width:70px;"><a href="/Gorev/GorevTamamla/@kg.ID" style="color:white;" title="Tamamla" class="btn btn-success" onclick="return confirm('Görev tamamlanacaktır, Onaylıyor musunuz?')"><i class="fa-solid fa-check"></i></a></td>
+                <td style="width:70px;"><a href="/Gorev/GorevSil/@kg.ID" style="color:white;" title="Sil" class="btn btn-danger" onclick="return confirm('Görev silinecektir, Onaylıyor musunuz?')"><i class="fa-solid fa-xmark"></i></a></td>
+            </tr>
+        }
+    }
+</table>

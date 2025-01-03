@@ -1,0 +1,282 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>@ViewBag.Title</title>
+    <link href="~/Web/dist/css/styles.css" rel="stylesheet" />
+    <link rel="icon" href="~/MartLogo.ico" type="image/x-icon" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+</head>
+<body>
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand">Sipariş Takip Sistemi</a><button title="Menü" class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button><!-- Navbar Search-->
+        <a title="Çıkış Yap" style=" margin-left:20px;" href="/Giris/CikisYap" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i></a>
+        <!-- Navbar-->
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    @if (User.IsInRole("1"))
+                    {
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">İşlemler</div>
+                            <a class="nav-link collapse" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-bell"></i></div>
+                                Siparişler <span style="padding-left:40px; color:white;">@ViewBag.TumSiparislerCount</span>
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapsed" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="/Siparis/Index">
+                                        Açık Siparişler <span style="padding-left:40px; color:white;">@ViewBag.Count</span>
+                                    </a>
+                                    <a class="nav-link" href="/Siparis/AskiyaAlinanSiparis">
+                                        Askıya Alınanlar <span style="padding-left:30px; color:white;">@ViewBag.AskiyaAlinanCount</span>
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                    <a class="nav-link" href="/GecmisSiparisHareket/Index">
+                                        Geçmiş Sipariş Hareketleri
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <a class="nav-link" href="/TedarikSiparisleri/Index">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-bell"></i></div>
+                                Satınalımlar <span style="padding-left:40px; color:white;">@ViewBag.TedarikSiparisCount</span>
+                            </a>
+                            <a class="nav-link collapse" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-file"></i></div>
+                                İş Emirleri <span style="padding-left:40px; color:white;">@ViewBag.IsEmirleriCount</span>
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapsed" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="/IsEmri/PlanliIsEmirleri">
+                                        Planlanmış <span style="padding-left:65px; color:white;">@ViewBag.PlanliIsEmirleriCount</span>
+                                    </a>
+                                    <a class="nav-link" href="/IsEmri/SMDIsEmirleri">
+                                        SMD <span style="padding-left:105px; color:white;">@ViewBag.SmdIsEmirleriCount</span>
+                                    </a>
+                                    <a class="nav-link" href="/IsEmri/THTIsEmirleri">
+                                        THT <span style="padding-left:107px; color:white;">@ViewBag.ThtIsEmirleriCount</span>
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                    <a class="nav-link" href="/IsEmri/IsEmirleriKapananlar">
+                                        Kapalı İş Emirleri <span style="padding-left:20px; color:white;">@ViewBag.KapaliIsEmirleriCount</span>
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapse" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-file"></i></div>
+                                Görevler
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapsed" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="/Gorev/Index">
+                                        Tüm Görevler <span style="padding-left:65px; color:white;">@ViewBag.TumGorevlerCount</span>
+                                    </a>
+                                    <a class="nav-link" href="/Gorev/Gorevlerim">
+                                        Görevlerim <span style="padding-left:80px; color:white;">@ViewBag.KendiGorevlerimCount</span>
+                                    </a>
+                                    <a class="nav-link" href="/Gorev/GecmisGorevler">
+                                        Geçmiş
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <a class="nav-link" href="/Siparis/PieChart">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                                İstatistik
+                            </a>
+                            <a class="nav-link" href="/Kullanici/Index">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-user"></i></div>
+                                Kullanıcı
+                            </a>
+                        </div>
+                    }
+                    else if (User.IsInRole("2"))
+                    {
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">İşlemler</div>
+                            <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-bell"></i></div>
+                                Siparişler <span style="padding-left:40px; color:white;">@ViewBag.TumSiparislerCount</span>
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapsed" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="/Siparis/Index">
+                                        Açık Siparişler <span style="padding-left:40px; color:white;">@ViewBag.Count</span>
+                                    </a>
+                                    <a class="nav-link" href="/Siparis/AskiyaAlinanSiparis">
+                                        Askıya Alınanlar <span style="padding-left:30px; color:white;">@ViewBag.AskiyaAlinanCount</span>
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                    <a class="nav-link" href="/GecmisSiparisHareket/Index">
+                                        Geçmiş Sipariş Hareketleri
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <a class="nav-link" href="/TedarikSiparisleri/Index">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-bell"></i></div>
+                                Satınalımlar <span style="padding-left:40px; color:white;">@ViewBag.TedarikSiparisCount</span>
+                            </a>
+                            <a class="nav-link collapse" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-file"></i></div>
+                                İş Emirleri <span style="padding-left:40px; color:white;">@ViewBag.IsEmirleriCount</span>
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapsed" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="/IsEmri/PlanliIsEmirleri">
+                                        Planlanmış <span style="padding-left:65px; color:white;">@ViewBag.PlanliIsEmirleriCount</span>
+                                    </a>
+                                    <a class="nav-link" href="/IsEmri/SMDIsEmirleri">
+                                        SMD <span style="padding-left:105px; color:white;">@ViewBag.SmdIsEmirleriCount</span>
+                                    </a>
+                                    <a class="nav-link" href="/IsEmri/THTIsEmirleri">
+                                        THT <span style="padding-left:107px; color:white;">@ViewBag.ThtIsEmirleriCount</span>
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                    <a class="nav-link" href="/IsEmri/IsEmirleriKapananlar">
+                                        Kapalı İş Emirleri <span style="padding-left:20px; color:white;">@ViewBag.KapaliIsEmirleriCount</span>
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapse" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-file"></i></div>
+                                Görevler
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapsed" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="/Gorev/Gorevlerim">
+                                        Görevlerim <span style="padding-left:80px; color:white;">@ViewBag.KendiGorevlerimCount</span>
+                                    </a>
+                                    <a class="nav-link" href="/Gorev/GecmisGorevler">
+                                        Geçmiş
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <a class="nav-link" href="/Siparis/PieChart">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                                İstatistik
+                            </a>
+                            <a class="nav-link" href="/Kullanici/Index">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-user"></i></div>
+                                Kullanıcı
+                            </a>
+                        </div>
+                    }
+                    else if (User.IsInRole("3"))
+                    {
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">İşlemler</div>
+                            <a class="nav-link" href="/IsEmri/THTIsEmirleri">
+                                THT <span style="padding-left:30px; color:white;">@ViewBag.ThtIsEmirleriCount</span>
+                            </a>
+                            <a class="nav-link" href="/IsEmri/THTKapaliIsEmirleri">
+                                THT Kapalı İş Emirleri <span style="padding-left:20px; color:white;">@ViewBag.THTKapaliIsEmriCount</span>
+                            </a>
+                            <a class="nav-link" href="/Gorev/Gorevlerim">
+                                Görevlerim <span style="padding-left:30px; color:white;">@ViewBag.KendiGorevlerimCount</span>
+                                <div class="sb-sidenav-collapse-arrow"></div>
+                            </a>
+                            <a class="nav-link" href="/Gorev/GecmisGorevler">
+                                Geçmiş
+                                <div class="sb-sidenav-collapse-arrow"></div>
+                            </a>
+                        </div>
+                    }
+                    else if (User.IsInRole("4"))
+                    {
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">İşlemler</div>
+                            <a class="nav-link" href="/IsEmri/SMDIsEmirleri">
+                                SMD <span style="padding-left:30px; color:white;">@ViewBag.SmdIsEmirleriCount</span>
+                            </a>
+                            <a class="nav-link" href="/IsEmri/SMDKapaliIsEmirleri">
+                                SMD Kapalı İş Emirleri <span style="padding-left:20px; color:white;">@ViewBag.SMDKapaliIsEmriCount</span>
+                            </a>
+                            <a class="nav-link" href="/Gorev/KendiGorevlerim">
+                                Görevlerim <span style="padding-left:30px; color:white;">@ViewBag.KendiGorevlerimCount</span>
+                                <div class="sb-sidenav-collapse-arrow"></div>
+                            </a>
+                            <a class="nav-link" href="/Gorev/GecmisGorevler">
+                                Geçmiş
+                                <div class="sb-sidenav-collapse-arrow"></div>
+                            </a>
+                        </div>
+                    }
+                    else if (User.IsInRole("9"))
+                    {
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">İşlemler</div>
+                            <a class="nav-link collapse" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-file"></i></div>
+                                Görevler <span style="padding-left:40px; color:white;">@ViewBag.TumGorevlerimCount</span>
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapsed" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link" href="/Gorev/Gorevlerim">
+                                        Görevlerim <span style="padding-left:90px; color:white;">@ViewBag.KendiGorevlerimCount</span>
+                                    </a>
+                                    <a class="nav-link" href="/Gorev/GecmisGorevler">
+                                        Geçmiş
+                                        <div class="sb-sidenav-collapse-arrow"></div>
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+
+                    }
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Mart Elektronik 2024 V1.8.14</div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="~/Web/dist/js/scripts.js"></script>
+</body>
+</html>
+

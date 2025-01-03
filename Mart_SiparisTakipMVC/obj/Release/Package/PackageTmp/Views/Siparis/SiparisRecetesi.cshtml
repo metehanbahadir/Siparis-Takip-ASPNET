@@ -1,0 +1,91 @@
+﻿@model List<Mart_SiparisTakipMVC.Models.Database.Receteler>
+@{
+    ViewBag.Title = ViewBag.SekmeBaslik;
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@if (User.IsInRole("1") || User.IsInRole("2"))
+{
+    <br />
+    <h3>Ürün Reçetesi: <span style="color:blue;">@ViewBag.ReceteBaslik </span></h3>
+    <br />
+    <h3 style="color:red;">@ViewBag.NullReceteMsg</h3>
+    <br />
+    <h3>Not: <span style="color:red;">@ViewBag.RecAciklama</span><a href="/Siparis/DosyaSec/@ViewBag.SekmeBaslik" style="float:right;" class="btn btn-primary">Dosya</a></h3>
+    <br />
+    <table class="table table-bordered">
+        <tr>
+            <th>Tüketim Kodu</th>
+            <th>Hammadde</th>
+            <th>Tüketim Miktarı</th>
+            <th>Birim</th>
+            <th>Açıklama</th>
+        </tr>
+        @foreach (var rec in Model)
+        {
+            if (rec.rec_tuketim_kod.StartsWith("51") || rec.rec_tuketim_kod.StartsWith("52"))
+            {
+                <tr>
+                    <td><a style="color:blue; text-decoration:underline; " target="_blank" href="/Siparis/SiparisRecetesiTuketimKod/@rec.rec_tuketim_kod">@rec.rec_tuketim_kod</a></td>
+                    <td>@rec.sto_isim_yarimamul</td>
+                    <td>@rec.rec_tuketim_miktar</td>
+                    <td>@rec.sto_birim</td>
+                    <td>@rec.rec_satir_acik</td>
+                </tr>
+            }
+
+            else
+            {
+                <tr>
+                    <td>@rec.rec_tuketim_kod</td>
+                    <td>@rec.sto_isim_yarimamul</td>
+                    <td>@rec.rec_tuketim_miktar</td>
+                    <td>@rec.sto_birim</td>
+                    <td>@rec.rec_satir_acik</td>
+                </tr>
+            }
+        }
+    </table>
+}
+else
+{
+    <br />
+    <h3>Ürün Reçetesi: <span style="color:blue;">@ViewBag.ReceteBaslik </span></h3>
+    <br />
+    <h3 style="color:red;">@ViewBag.NullReceteMsg</h3>
+    <br />
+    <h3>Not: <span style="color:red;">@ViewBag.RecAciklama</span></h3>
+    <br />
+    <table class="table table-bordered">
+        <tr>
+            <th>Tüketim Kodu</th>
+            <th>Hammadde</th>
+            <th>Tüketim Miktarı</th>
+            <th>Birim</th>
+            <th>Açıklama</th>
+        </tr>
+        @foreach (var rec in Model)
+        {
+            if (rec.rec_tuketim_kod.StartsWith("51") || rec.rec_tuketim_kod.StartsWith("52"))
+            {
+                <tr>
+                    <td><a style="color:blue; text-decoration:underline; " target="_blank" href="/Siparis/SiparisRecetesiTuketimKod/@rec.rec_tuketim_kod">@rec.rec_tuketim_kod</a></td>
+                    <td>@rec.sto_isim_yarimamul</td>
+                    <td>@rec.rec_tuketim_miktar</td>
+                    <td>@rec.sto_birim</td>
+                    <td>@rec.rec_satir_acik</td>
+                </tr>
+            }
+
+            else
+            {
+                <tr>
+                    <td>@rec.rec_tuketim_kod</td>
+                    <td>@rec.sto_isim_yarimamul</td>
+                    <td>@rec.rec_tuketim_miktar</td>
+                    <td>@rec.sto_birim</td>
+                    <td>@rec.rec_satir_acik</td>
+                </tr>
+            }
+        }
+    </table>
+}

@@ -1,0 +1,68 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.IsEmirleri
+@{
+    ViewBag.Title = "İş Emri Notu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    window.onload = function () {
+        $('#IsEmriDetay').modal('show');
+    }
+
+    function preventSpecialCharacters(event) {
+        // İzin verilen karakterlerin bir listesini oluşturun     
+        const allowedCharacters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "a", "b", "c", "ç", "d", "e", "f", "g", "ğ", "h", "ı", "i", "j", "k", "l", "m", "n", "o", "ö", "p", "q", "r", "s", "ş", "t", "u", "ü", "v", "w", "x", "y", "z",
+            "A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "Q", "R", "S", "Ş", "T", "U", "Ü", "V", "W", "X", "Y", "Z", ".", ",", " ", "Enter"];
+
+        // Girilen karakterin izin verilen karakterler listesinde olup olmadığını kontrol edin
+        const isAllowedCharacter = allowedCharacters.includes(event.key);
+
+        // Girilen karakter izin verilen karakterler listesinde değilse, giriş işlemini engelle
+        if (!isAllowedCharacter) {
+            event.preventDefault();
+        }
+    }        
+</script>
+<span style="visibility:hidden;">@ViewBag.IsEmriSorumluluk</span> @*if kontrolleri yapmak için iş emrinin sorumluluk merk. değeri view a taşındı ve gizlendi*@
+<span style="visibility:hidden;">@ViewBag.IsEmri_msgS0355</span> @*if kontrolleri yapmak için iş emrinin durumu(aktif,kapalı,planlı) değeri view a taşındı ve gizlendi*@
+<div class="modal" id="IsEmriDetay">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Not Ekle</h3>
+                @if (ViewBag.IsEmriSorumluluk == "70")
+                {
+                    <a style="float:right;" href="/IsEmri/SMDIsEmirleri" class="btn btn-primary"><i class="fa-solid fa-xmark"></i></a>
+                }
+                else
+                {
+                    if (ViewBag.IsEmri_msgS0355 == "Planlanmış")
+                    {
+                        <a style="float:right;" href="/IsEmri/PlanliIsEmirleri" class="btn btn-primary"><i class="fa-solid fa-xmark"></i></a>
+                    }
+                    else
+                    {
+                        <a style="float:right;" href="/IsEmri/THTIsEmirleri" class="btn btn-primary"><i class="fa-solid fa-xmark"></i></a>
+                    }
+                }
+            </div>
+            <form class="modal-body" action="/IsEmri/IsEmriDuzenle" method="post">
+                <span style="color:red; font-size:17px; padding:5px 0 0 30px;">@ViewBag.Msg</span>
+                <br />
+                @Html.HiddenFor(x => x.msg_S_0349)
+                @Html.Label("Ürün İsmi")
+                <h5 style="width:400px; padding-left:10px;">@ViewBag.UrunIsim</h5>
+                <br />
+                @Html.LabelFor(x => x.Not)
+                @Html.TextAreaFor(x => x.Not, new { style = "width:400px; text-align:center;", onkeypress = "javascript:return preventSpecialCharacters(event)", @class = "form-control" })
+                <br />
+                @Html.Label("Personel")
+                @Html.TextBoxFor(x => x.Kullanici, new { style = "width:400px; text-align:center;", disabled = "disabled", @class = "form-control" })
+                <br />
+                <button class="btn btn-primary">Kaydet</button>
+            </form>
+        </div>
+    </div>
+</div>
+

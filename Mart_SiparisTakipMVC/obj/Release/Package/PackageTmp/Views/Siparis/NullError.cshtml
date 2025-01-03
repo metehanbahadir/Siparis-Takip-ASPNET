@@ -1,0 +1,22 @@
+﻿
+@{
+    ViewBag.Title = "Error";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    window.onload = function () {
+        $('#NullErrorModal').modal('show');
+    }
+</script>
+<div class="modal" id="NullErrorModal">
+    <div class="modal-dialog" style="width:30%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 style="color:red;">Hata!</h4>
+            </div>
+            <div class="modal-body">
+                <h4 style="color:red;">Oopss!! Aradığınız sayfa bulunamamıştır</h4>
+            </div>
+        </div>
+    </div>
+</div>

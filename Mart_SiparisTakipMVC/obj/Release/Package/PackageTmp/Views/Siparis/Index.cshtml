@@ -1,0 +1,356 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.GuncelSiparisler>
+@{
+    ViewBag.Title = "Açık Siparişler";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<meta http-equiv="refresh" content="900000" /> @*900000 sn (15 dk) de bir refresh işlemi yapan kod*@
+<script src="https://kit.fontawesome.com/b4ef86249b.js" crossorigin="anonymous"></script>
+<script>
+    function oturumuKapat() {
+        $.ajax({
+            url: '/Giris/CikisYap', // Oturumu kapatma işlemini gerçekleştirecek MVC controller'ın URL'sini belirtin
+            type: 'POST',
+            dataType: 'json',
+        });
+    }
+
+    // Sekme kapatıldığında oturumu kapatma işlemi
+    window.onunload = function () {
+        oturumuKapat();
+    }
+</script>
+<br />
+<h3>Personel: <span style="color:blue;">@ViewBag.Personel</span> - Siparişler: <span style="color:blue;">@ViewBag.Count</span><img style=" float:right; margin-right:100px; width:230px; height:50px;" src="~/Content/martrenklilogo.png" /></h3>
+<br />
+<span>@ViewBag.HataMsg</span>
+<br />
+<a title="Ters Sıralama" style="margin-left:10px;" href="/Siparis/TersSiralama" class="btn btn-primary"><i class="fa-solid fa-sort"></i></a>
+<a title="Kırmızı: Teslimat Tarihi Geçmiş Siparişler
+     Sarı: Teslimat Tarihi'ne 7 Günden Az Kalmış Siparişler
+    Yeşil: Paketlenmiş Siparişler
+K.rengi: İthalat/İhracat olan ve Teslimat Tarihi'ne 7-15 Gün Arası Kalmış Siparişler" class="btn btn-primary" style="color:white; cursor:text;"><i class="fa-solid fa-circle-info"></i></a>
+<a style="margin-right:5px; color:white;" onclick="location.href='@Url.Action("TumSiparislerExcel","Siparis")'" class="btn btn-primary" title="Excel Döküm Al"><i class="fa-solid fa-file-excel"></i></a>
+<div style="float:right; margin-right:1000px;">
+    @using (Html.BeginForm("SiparisFiltrele", "Siparis", FormMethod.Get))
+    {
+        <div class="container">
+            @Html.TextBox("siparisfiltre", null, new { style = "width:250px; text-align:center; position: absolute; left: 40%; transform: translate(-50%, -50%);", title = "Cari, Stok Kodu, Ürün İsmi, Sipariş Cinsi, Durum, Not arayabilirsiniz", placeholder = "Sipariş Arayın", autocomplete = "off", @class = "form-control" })
+            @*<button type="submit">Ara</button>*@
+        </div>
+    }
+</div>
+<br />
+<br />
+<table class="table table-bordered table-responsive-xxl" style="width:100%;">
+    <tr>
+        <th style="width:180px;">Cari Adı <a style="float: right; padding-right:5px; color:deepskyblue; cursor:pointer;" onclick="location.href='@Url.Action("CariTersAlfabetik","Siparis")'"><i title="Müşteriye Göre Ters Alfabetik Sırala" class="fa-solid fa-arrow-down"></i></a><a style="float: right; padding-right: 20px; color:deepskyblue; cursor:pointer;" onclick="location.href='@Url.Action("CariAlfabetik","Siparis")'"><i title="Müşteriye Göre Alfabetik Sırala" class="fa-solid fa-arrow-up"></i></a></th>
+        <th style="width:100px;">Seri - Sıra No</th>
+        <th>Stok Kodu</th>
+        <th>Ürün İsmi <a style="float: right; padding-right: 5px; color:deepskyblue; cursor:pointer;" onclick="location.href='@Url.Action("UrunTersAlfabetik","Siparis")'"><i title="Ürüne Göre Ters Alfabetik Sırala" class="fa-solid fa-arrow-down"></i></a><a style="float: right; padding-right: 20px; color:deepskyblue; cursor:pointer;" onclick="location.href='@Url.Action("UrunAlfabetik","Siparis")'"><i title="Ürüne Göre Alfabetik Sırala" class="fa-solid fa-arrow-up"></i></a></th>
+        <th>Belge No</th>
+        <th>Teslim Tarihi</th>
+        <th style="width:80px;">Cinsi</th>
+        <th style="width:60px;">Sipariş Miktar</th>
+        <th title="Tamamlanan Miktar" style="width:50px;">Tmm. Miktar</th>
+        <th title="Kalan Miktar" style="width:60px;">Kalan</th>
+        <th>Durum</th>
+        <th style="width:200px;">Not</th>
+        <th colspan="2">İşlemler</th>
+    </tr>
+    @foreach (var orders in Model)
+    {
+        orders.sip_evrakno_seri = orders.sip_evrakno_seri + " - " + orders.sip_evrakno_sira;
+
+        if (orders.sip_cins == "0")
+        {
+            orders.sip_cins = "Normal";
+        }
+        else if (orders.sip_cins == "1")
+        {
+            orders.sip_cins = "Konsinye Sipariş";
+        }
+        else if (orders.sip_cins == "2")
+        {
+            orders.sip_cins = "Proforma Sipariş";
+        }
+        else if (orders.sip_cins == "3")
+        {
+            orders.sip_cins = "İthalat/İhracat";
+        }
+        else if (orders.sip_cins == "4")
+        {
+            orders.sip_cins = "Fason Sipariş";
+        }
+        else if (orders.sip_cins == "5")
+        {
+            orders.sip_cins = "Dahili Sarf Siparişi";
+        }
+        else if (orders.sip_cins == "6")
+        {
+            orders.sip_cins = "Depolar Arası Sipariş";
+        }
+        else if (orders.sip_cins == "7")
+        {
+            orders.sip_cins = "Satın Alma Talebi";
+        }
+        else if (orders.sip_cins == "8")
+        {
+            orders.sip_cins = "Üretim Talebi";
+        }
+        else
+        {
+            orders.sip_cins = "İş Emirleri";
+        }
+
+        var kalangun = (Convert.ToDateTime(orders.sip_teslim_tarih) - Convert.ToDateTime(System.DateTime.Today)).Days;
+
+        if (orders.Durum == "Paketlendi")
+        {
+            if (orders.sip_teslim_tarih < System.DateTime.Today)
+            {
+                if (orders.sip_stok_kod.StartsWith("51") || orders.sip_stok_kod.StartsWith("52"))
+                {
+                    <tr class="bg-success">
+                        <td style="color:white;">@orders.cari_unvan</td>
+                        <td style="color:white;">@orders.sip_evrakno_seri</td>
+                        <td><a style="color:white; text-decoration: underline;" target="_blank" href="/Siparis/SiparisRecetesi/@orders.sip_stok_kod">@orders.sip_stok_kod</a></td>
+                        <td style="color:white;">@orders.sto_isim</td>
+                        <td style="color:white;">@orders.sip_belge_no</td>
+                        <td style="color:white;">@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td style="color:white;">@orders.sip_cins</td>
+                        <td style="color:white;">@orders.sip_miktar</td>
+                        <td style="color:white;">@orders.sip_teslim_miktar</td>
+                        <td style="color:white;">@orders.Teslimden_Kalan</td>
+                        <td style="color:white;">@orders.Durum</td>
+                        <td style="color:white;">@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+
+                }
+                else
+                {
+                    <tr class="bg-success">
+                        <td style="color:white;">@orders.cari_unvan</td>
+                        <td style="color:white;">@orders.sip_evrakno_seri</td>
+                        <td style="color:white;">@orders.sip_stok_kod</td>
+                        <td style="color:white;">@orders.sto_isim</td>
+                        <td style="color:white;">@orders.sip_belge_no</td>
+                        <td style="color:white;">@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td style="color:white;">@orders.sip_cins</td>
+                        <td style="color:white;">@orders.sip_miktar</td>
+                        <td style="color:white;">@orders.sip_teslim_miktar</td>
+                        <td style="color:white;">@orders.Teslimden_Kalan</td>
+                        <td style="color:white;">@orders.Durum</td>
+                        <td style="color:white;">@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+            }
+
+            else
+            {
+                if (orders.sip_stok_kod.StartsWith("51") || orders.sip_stok_kod.StartsWith("52"))
+                {
+                    <tr class="bg-success">
+                        <td style="color:white;">@orders.cari_unvan</td>
+                        <td style="color:white;">@orders.sip_evrakno_seri</td>
+                        <td><a style="color:white; text-decoration:underline;" target="_blank" href="/Siparis/SiparisRecetesi/@orders.sip_stok_kod">@orders.sip_stok_kod</a></td>
+                        <td style="color:white;">@orders.sto_isim</td>
+                        <td style="color:white;">@orders.sip_belge_no</td>
+                        <td style="color:white;">@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td style="color:white;">@orders.sip_cins</td>
+                        <td style="color:white;">@orders.sip_miktar</td>
+                        <td style="color:white;">@orders.sip_teslim_miktar</td>
+                        <td style="color:white;">@orders.Teslimden_Kalan</td>
+                        <td style="color:white;">@orders.Durum</td>
+                        <td style="color:white;">@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr class="bg-success">
+                        <td style="color:white;">@orders.cari_unvan</td>
+                        <td style="color:white;">@orders.sip_evrakno_seri</td>
+                        <td style="color:white;">@orders.sip_stok_kod</td>
+                        <td style="color:white;">@orders.sto_isim</td>
+                        <td style="color:white;">@orders.sip_belge_no</td>
+                        <td style="color:white;">@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td style="color:white;">@orders.sip_cins</td>
+                        <td style="color:white;">@orders.sip_miktar</td>
+                        <td style="color:white;">@orders.sip_teslim_miktar</td>
+                        <td style="color:white;">@orders.Teslimden_Kalan</td>
+                        <td style="color:white;">@orders.Durum</td>
+                        <td style="color:white;">@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+            }
+        }
+
+        else
+        {
+            if (orders.sip_teslim_tarih < System.DateTime.Now)
+            {
+                if (orders.sip_stok_kod.StartsWith("51") || orders.sip_stok_kod.StartsWith("52"))
+                {
+                    <tr class="bg-danger">
+                        <td style="color:white;">@orders.cari_unvan</td>
+                        <td style="color:white;">@orders.sip_evrakno_seri</td>
+                        <td><a style="color:white; text-decoration: underline;" target="_blank" href="/Siparis/SiparisRecetesi/@orders.sip_stok_kod">@orders.sip_stok_kod</a></td>
+                        <td style="color:white;">@orders.sto_isim</td>
+                        <td style="color:white;">@orders.sip_belge_no</td>
+                        <td style="color:white;">@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td style="color:white;">@orders.sip_cins</td>
+                        <td style="color:white;">@orders.sip_miktar</td>
+                        <td style="color:white;">@orders.sip_teslim_miktar</td>
+                        <td style="color:white;">@orders.Teslimden_Kalan</td>
+                        <td style="color:white;">@orders.Durum</td>
+                        <td style="color:white;">@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr class="bg-danger">
+                        <td style="color:white;">@orders.cari_unvan</td>
+                        <td style="color:white;">@orders.sip_evrakno_seri</td>
+                        <td style="color:white;">@orders.sip_stok_kod</td>
+                        <td style="color:white;">@orders.sto_isim</td>
+                        <td style="color:white;">@orders.sip_belge_no</td>
+                        <td style="color:white;">@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td style="color:white;">@orders.sip_cins</td>
+                        <td style="color:white;">@orders.sip_miktar</td>
+                        <td style="color:white;">@orders.sip_teslim_miktar</td>
+                        <td style="color:white;">@orders.Teslimden_Kalan</td>
+                        <td style="color:white;">@orders.Durum</td>
+                        <td style="color:white;">@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+            }
+
+            else if ((orders.sip_teslim_tarih - System.DateTime.Now).TotalDays <= 7)
+            {
+                if (orders.sip_stok_kod.StartsWith("51") || orders.sip_stok_kod.StartsWith("52"))
+                {
+                    <tr class="bg-warning">
+                        <td>@orders.cari_unvan</td>
+                        <td>@orders.sip_evrakno_seri</td>
+                        <td><a style="color:white; text-decoration:underline;" target="_blank" href="/Siparis/SiparisRecetesi/@orders.sip_stok_kod">@orders.sip_stok_kod</a></td>
+                        <td>@orders.sto_isim</td>
+                        <td>@orders.sip_belge_no</td>
+                        <td>@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td>@orders.sip_cins</td>
+                        <td>@orders.sip_miktar</td>
+                        <td>@orders.sip_teslim_miktar</td>
+                        <td>@orders.Teslimden_Kalan</td>
+                        <td>@orders.Durum</td>
+                        <td>@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr class="bg-warning">
+                        <td>@orders.cari_unvan</td>
+                        <td>@orders.sip_evrakno_seri</td>
+                        <td>@orders.sip_stok_kod</td>
+                        <td>@orders.sto_isim</td>
+                        <td>@orders.sip_belge_no</td>
+                        <td>@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td>@orders.sip_cins</td>
+                        <td>@orders.sip_miktar</td>
+                        <td>@orders.sip_teslim_miktar</td>
+                        <td>@orders.Teslimden_Kalan</td>
+                        <td>@orders.Durum</td>
+                        <td>@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+            }
+            else if ((orders.sip_teslim_tarih - System.DateTime.Now).TotalDays <= 15 && orders.sip_cins == "İthalat/İhracat")
+            {
+                if (orders.sip_stok_kod.StartsWith("51") || orders.sip_stok_kod.StartsWith("52"))
+                {
+                    <tr style="background-color:darkgoldenrod;">
+                        <td style="color:white;">@orders.cari_unvan</td>
+                        <td style="color:white;">@orders.sip_evrakno_seri</td>
+                        <td><a style="color:white; text-decoration:underline;" target="_blank" href="/Siparis/SiparisRecetesi/@orders.sip_stok_kod">@orders.sip_stok_kod</a></td>
+                        <td style="color:white;">@orders.sto_isim</td>
+                        <td style="color:white;">@orders.sip_belge_no</td>
+                        <td style="color:white;">@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td style="color:white;">@orders.sip_cins</td>
+                        <td style="color:white;">@orders.sip_miktar</td>
+                        <td style="color:white;">@orders.sip_teslim_miktar</td>
+                        <td style="color:white;">@orders.Teslimden_Kalan</td>
+                        <td style="color:white;">@orders.Durum</td>
+                        <td style="color:white;">@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr style="background-color:darkgoldenrod;">
+                        <td style="color:white;">@orders.cari_unvan</td>
+                        <td style="color:white;">@orders.sip_evrakno_seri</td>
+                        <td style="color:white;">@orders.sip_stok_kod</td>
+                        <td style="color:white;">@orders.sto_isim</td>
+                        <td style="color:white;">@orders.sip_belge_no</td>
+                        <td style="color:white;">@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td style="color:white;">@orders.sip_cins</td>
+                        <td style="color:white;">@orders.sip_miktar</td>
+                        <td style="color:white;">@orders.sip_teslim_miktar</td>
+                        <td style="color:white;">@orders.Teslimden_Kalan</td>
+                        <td style="color:white;">@orders.Durum</td>
+                        <td style="color:white;">@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+            }
+
+            else
+            {
+                if (orders.sip_stok_kod.StartsWith("51") || orders.sip_stok_kod.StartsWith("52"))
+                {
+                    <tr>
+                        <td>@orders.cari_unvan</td>
+                        <td>@orders.sip_evrakno_seri</td>
+                        <td><a style="text-decoration:underline;" target="_blank" href="/Siparis/SiparisRecetesi/@orders.sip_stok_kod">@orders.sip_stok_kod</a></td>
+                        <td>@orders.sto_isim</td>
+                        <td>@orders.sip_belge_no</td>
+                        <td>@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td>@orders.sip_cins</td>
+                        <td>@orders.sip_miktar</td>
+                        <td>@orders.sip_teslim_miktar</td>
+                        <td>@orders.Teslimden_Kalan</td>
+                        <td>@orders.Durum</td>
+                        <td>@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@orders.cari_unvan</td>
+                        <td>@orders.sip_evrakno_seri</td>
+                        <td>@orders.sip_stok_kod</td>
+                        <td>@orders.sto_isim</td>
+                        <td>@orders.sip_belge_no</td>
+                        <td>@orders.sip_teslim_tarih.ToString("dd/MM/yyyy")<br /><span>Kalan Gün: @kalangun</span></td>
+                        <td>@orders.sip_cins</td>
+                        <td>@orders.sip_miktar</td>
+                        <td>@orders.sip_teslim_miktar</td>
+                        <td>@orders.Teslimden_Kalan</td>
+                        <td>@orders.Durum</td>
+                        <td>@orders.Not</td>
+                        <td><a href="/Siparis/SiparisGetir/@orders.UID" class="btn btn-primary">Detay</a></td>
+                    </tr>
+                }
+            }
+        }
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("Index", new { sayfa }))

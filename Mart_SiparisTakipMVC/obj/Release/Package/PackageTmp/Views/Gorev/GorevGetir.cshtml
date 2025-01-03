@@ -1,0 +1,118 @@
+﻿@model Mart_SiparisTakipMVC.Models.Database.Gorevler
+@{
+    ViewBag.Title = "Görev Düzenle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    window.onload = function () {
+        $('#YeniGorevModal').modal('show');
+        document.getElementById("atananpersonel2").disabled = true;
+        document.getElementById("atananpersonel3").disabled = true;
+    }
+
+    function preventSpecialCharacters(event) {
+        // İzin verilen karakterlerin bir listesini oluşturun
+        const allowedCharacters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+            "a", "b", "c", "ç", "d", "e", "f", "g", "ğ", "h", "ı", "i", "j", "k", "l", "m", "n", "o", "ö", "p", "q", "r", "s", "ş", "t", "u", "ü", "v", "w", "x", "y", "z",
+            "A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H", "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P", "Q", "R", "S", "Ş", "T", "U", "Ü", "V", "W", "X", "Y", "Z", ".", ",", " ", "Enter"];
+
+        // Girilen karakterin izin verilen karakterler listesinde olup olmadığını kontrol edin
+        const isAllowedCharacter = allowedCharacters.includes(event.key);
+
+        // Girilen karakter izin verilen karakterler listesinde değilse, giriş işlemini engelle
+        if (!isAllowedCharacter) {
+            event.preventDefault();
+        }
+
+    }
+    function onChangeDDL2() {
+        var atananpersonel1_value = document.getElementById("atananpersonel1").value;
+        var atananpersonel2 = document.getElementById("atananpersonel2");
+
+        if (atananpersonel1_value != "") {
+            atananpersonel2.disabled = false;
+        }
+        else {
+            atananpersonel2.value = "";
+            atananpersonel2.disabled = true;
+            atananpersonel3.value = "";
+            atananpersonel3.disabled = true;
+        }
+    }
+
+    function onChangeDDL3() {
+        var atananpersonel1_value = document.getElementById("atananpersonel1").value;
+        var atananpersonel2_value = document.getElementById("atananpersonel2").value;
+        var atananpersonel3 = document.getElementById("atananpersonel3");
+
+        if ((atananpersonel2_value != "") && (atananpersonel2_value != atananpersonel1_value)) {
+            atananpersonel3.disabled = false;
+        }
+        else {
+            atananpersonel3.value = "";
+            atananpersonel3.disabled = true;
+        }
+    }
+</script>
+<div class="modal" id="YeniGorevModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Görev Düzenle</h3>
+                <a href="/Gorev/Gorevlerim" class="btn btn-primary">X</a>
+            </div>
+            <form class="modal-body" action="/Gorev/GorevDuzenle" method="post" enctype="multipart/form-data">
+                <h5 style="color:red; align-items:center; text-align:center;">@ViewBag.FileSizeErrMsg</h5>
+                <h5 style="color:red; align-items:center; text-align:center;">@ViewBag.MaxFileCountErr</h5>
+                @Html.HiddenFor(x => x.ID)
+                @Html.Label("Görev")
+                @Html.TextAreaFor(x => x.Gorev, new { style = "width:400px;", onkeypress = "javascript:return preventSpecialCharacters(event)", autocomplete = "off", required = "required", @class = "form-control" })
+                <br />
+                @Html.Label("Başlama Tarihi")
+                @Html.TextBoxFor(x => x.Baslama_Tarihi, new { style = "text-align:center; width:400px;", type = "date", @class = "form-control" })
+                <br />
+                @Html.Label("Bitiş Tarihi")
+                @Html.TextBoxFor(x => x.Bitis_Tarihi, new { style = "text-align:center; width:400px;", type = "date", @class = "form-control" })
+                <br />
+                @Html.Label("Atanan Personel")
+                @Html.DropDownList("AtananPersonel1", ((IEnumerable<SelectListItem>)ViewBag.PersonelDDl), (string)"Seçiniz", new { id = "atananpersonel1", style = "width:400px; text-align:center;", onchange = "javascript:return onChangeDDL2()", required = "required", @class = "form-control" })
+                <br />
+                @Html.Label("Atanan Personel")
+                @Html.DropDownList("AtananPersonel2", ((IEnumerable<SelectListItem>)ViewBag.PersonelDDl), (string)"Seçiniz", new { id = "atananpersonel2", style = "width:400px; text-align:center;", onchange = "javascript:return onChangeDDL3()", @class = "form-control" })
+                <br />
+                @Html.Label("Atanan Personel")
+                @Html.DropDownList("AtananPersonel3", ((IEnumerable<SelectListItem>)ViewBag.PersonelDDl), (string)"Seçiniz", new { id = "atananpersonel3", style = "width:400px; text-align:center;", onchange = "javascript:return onChangeDDL3()", @class = "form-control" })
+                <br />
+                @Html.Label((string)ViewBag.Atayan + " (Atayan)")
+                @Html.TextAreaFor(x => x.Not_Atayan, new { style = "width:400px;", onkeypress = "javascript:return preventSpecialCharacters(event)", @class = "form-control" })
+                @Html.TextBox("DosyaYolu", null, new { style = "width:400px; text-align:center; margin-top:5px;", title = "Max dosya boyutu 10 MB olmalıdır", type = "file", @class = "form-control" })
+                <br />
+                @try
+                {
+                    @Html.Label((string)ViewBag.Atanan1)
+                    @Html.TextAreaFor(x => x.Not1, new { style = "width:400px;", onkeypress = "javascript:return preventSpecialCharacters(event)", disabled = "disabled", @class = "form-control" })
+                    <br />
+                    @Html.Label((string)ViewBag.Atanan2)
+                    @Html.TextAreaFor(x => x.Not2, new { style = "width:400px;", onkeypress = "javascript:return preventSpecialCharacters(event)", disabled = "disabled", @class = "form-control" })
+                    <br />
+                    @Html.Label((string)ViewBag.Atanan3)
+                    @Html.TextAreaFor(x => x.Not3, new { style = "width:400px;", onkeypress = "javascript:return preventSpecialCharacters(event)", disabled = "disabled", @class = "form-control" })
+                    <br />
+                }
+                catch { }
+                @if (ViewBag.GorevDosyaCount > 0)
+                {
+                    <a href="/Gorev/GoreveEklenenDosyalariGetir/@ViewBag.GorevID" class="btn btn-success" title="Dosyaları Görüntüle">Dosyalar</a>
+                }
+                else
+                {
+
+                }
+                <button class="btn btn-primary">Kaydet</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+

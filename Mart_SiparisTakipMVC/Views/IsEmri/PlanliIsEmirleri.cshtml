@@ -1,0 +1,154 @@
+﻿@using PagedList
+@using PagedList.Mvc
+@model PagedList.IPagedList<Mart_SiparisTakipMVC.Models.Database.IsEmirleri>
+@{
+    ViewBag.Title = "Planlı İş Emirleri";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<script>
+    function oturumuKapat() {
+        $.ajax({
+            url: '/Giris/CikisYap', // Oturumu kapatma işlemini gerçekleştirecek MVC controller'ın URL'sini belirtin
+            type: 'POST',
+            dataType: 'json',
+        });
+    }
+
+    // Sekme kapatıldığında oturumu kapatma işlemi
+    window.onunload = function () {
+        oturumuKapat();
+    }
+</script>
+<br />
+<h2>Planlı İş Emirleri - Toplam: <span style="color:blue;">@ViewBag.PlanliIsEmirleriCount</span><img style=" float:right; margin-right:100px; width:230px; height:50px;" src="~/Content/martrenklilogo.png" /></h2>
+<br />
+<a title="Ters Sıralama" style="margin-left:10px;" href="/IsEmri/SMDTersSiralama" class="btn btn-primary"><i class="fa-solid fa-sort"></i></a>
+<a title="Kırmızı: Teslimat Tarihi Geçmiş Siparişler
+     Sarı: Teslimat Tarihi'ne 7 Günden Az Kalmış Siparişler
+    Yeşil: Paketlenmiş Siparişler
+K.rengi: İthalat/İhracat olan ve Teslimat Tarihi'ne 7-15 Gün Arası Kalmış Siparişler" class="btn btn-primary" style="color:white; cursor:no-drop"><i class="fa-solid fa-circle-info"></i></a>
+<div style="float:right; margin-right:1000px;">
+    @using (Html.BeginForm("PlanliIsEmriFiltre", "IsEmri", FormMethod.Get))
+    {
+        <div class="container">
+            @Html.TextBox("planliisemrifiltre", null, new { style = "width:250px; text-align:center; position: absolute; left: 40%; transform: translate(-50%, -50%);", title = "Cari, Stok Kodu, Ürün İsmi, Sipariş Cinsi, Durum, Not arayabilirsiniz", placeholder = "Sipariş Arayın", autocomplete = "off", @class = "form-control" })
+            @*<button type="submit">Ara</button>*@
+        </div>
+    }
+</div>
+<br />
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>İş Emri No</th>
+        <th>Ürün Kodu</th>
+        <th>Ürün İsmi<a style="float: right; padding-right:5px;" href="/IsEmri/PlanliUrunTersAlfabetik"><i title="Ürüne Göre Ters Alfabetik Sırala" class="fa-solid fa-arrow-down"></i></a><a style="float: right; padding-right: 20px;" href="/IsEmri/PlanliUrunAlfabetik"><i title="Ürüne Göre Alfabetik Sırala" class="fa-solid fa-arrow-up"></i></a></th>
+        <th>Üretilecek Miktar</th>
+        <th title="Planlanan Başlama Tarihi">P. Bşl. Tarihi</th>
+        <th title="Planlanan Bitiş Tarihi">P. Bitiş Tarihi</th>
+        <th title="İş Emri Tipi">Tipi</th>
+        <th style="width:70px;">Kalan Gün</th>
+        <th style="width:200px;">Not</th>
+        <th>İşlemler</th>
+    </tr>
+    @foreach (var pie in Model)
+    {
+        var kalangun = (System.DateTime.Today - pie.msg_S_0366).ToString("dd");
+
+        if (pie.is_SorumlulukMerkezi == "70")
+        {
+            pie.is_SorumlulukMerkezi = "SMD";
+        }
+        else if (pie.is_SorumlulukMerkezi == "80")
+        {
+            pie.is_SorumlulukMerkezi = "THT";
+        }
+        else
+        {
+            pie.is_SorumlulukMerkezi = "Mekanik Montaj";
+        }
+
+        if (pie.msg_S_0390 == "")
+        {
+            pie.msg_S_0390 = "Mart Elektronik";
+        }
+        else
+        {
+            pie.msg_S_0390 = pie.msg_S_0390;
+        }
+
+        if (pie.msg_S_0366 < System.DateTime.Today)
+        {
+            if (pie.msg_S_0352.StartsWith("51") || pie.msg_S_0352.StartsWith("52"))
+            {
+                <tr class="bg-danger">
+                    <td style="color:white;">@pie.msg_S_0349</td>
+                    <td><a style="color:white; text-decoration: underline;" target="_blank" href="/Siparis/SiparisRecetesi/@pie.msg_S_0352">@pie.msg_S_0352</a></td>
+                    <td style="color:white;">@pie.msg_S_0353</td>
+                    <td style="color:white;">@pie.msg_S_0354</td>
+                    <td style="color:white;">@pie.msg_S_0361.ToString("dd/MM/yyyy")</td>
+                    <td style="color:white;">@pie.msg_S_0366.ToString("dd/MM/yyyy")</td>
+                    <td style="color:white;">@pie.is_SorumlulukMerkezi</td>
+                    <td style="color:white;">-@kalangun</td>
+                    <td style="color:white;">@pie.Not</td>
+                    <td><a href="/IsEmri/IsEmriGetir/@pie.msg_S_0349" class="btn btn-primary">Not</a></td>
+                    <td><a href="/Siparis/DosyaSec/@pie.msg_S_0352" target="_blank" class="btn btn-primary">Dosya</a></td>
+                </tr>
+            }
+            else
+            {
+                <tr class="bg-danger">
+                    <td style="color:white;">@pie.msg_S_0349</td>
+                    <td style="color:white;">@pie.msg_S_0352</td>
+                    <td style="color:white;">@pie.msg_S_0353</td>
+                    <td style="color:white;">@pie.msg_S_0354</td>
+                    <td style="color:white;">@pie.msg_S_0361.ToString("dd/MM/yyyy")</td>
+                    <td style="color:white;">@pie.msg_S_0366.ToString("dd/MM/yyyy")</td>
+                    <td style="color:white;">@pie.is_SorumlulukMerkezi</td>
+                    <td style="color:white;">-@kalangun</td>
+                    <td style="color:white;">@pie.Not</td>
+                    <td><a href="/IsEmri/IsEmriGetir/@pie.msg_S_0349" class="btn btn-primary">Not</a></td>
+                    <td><a href="/Siparis/DosyaSec/@pie.msg_S_0352" target="_blank" class="btn btn-primary">Dosya</a></td>
+                </tr>
+            }
+        }
+        else
+        {
+            if (pie.msg_S_0352.StartsWith("51") || pie.msg_S_0352.StartsWith("52"))
+            {
+                <tr>
+                    <td>@pie.msg_S_0349</td>
+                    <td><a style="text-decoration: underline;" target="_blank" href="/Siparis/SiparisRecetesi/@pie.msg_S_0352">@pie.msg_S_0352</a></td>
+                    <td>@pie.msg_S_0353</td>
+                    <td>@pie.msg_S_0354</td>
+                    <td>@pie.msg_S_0361.ToString("dd/MM/yyyy")</td>
+                    <td>@pie.msg_S_0366.ToString("dd/MM/yyyy")</td>
+                    <td>@pie.is_SorumlulukMerkezi</td>
+                    <td>@kalangun</td>
+                    <td>@pie.Not</td>
+                    <td><a href="/IsEmri/IsEmriGetir/@pie.msg_S_0349" class="btn btn-primary">Not</a></td>
+                    <td><a href="/Siparis/DosyaSec/@pie.msg_S_0352" target="_blank" class="btn btn-primary">Dosya</a></td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td style="color:white;">@pie.msg_S_0349</td>
+                    <td style="color:white;">@pie.msg_S_0352</td>
+                    <td style="color:white;">@pie.msg_S_0353</td>
+                    <td style="color:white;">@pie.msg_S_0354</td>
+                    <td style="color:white;">@pie.msg_S_0361.ToString("dd/MM/yyyy")</td>
+                    <td style="color:white;">@pie.msg_S_0366.ToString("dd/MM/yyyy")</td>
+                    <td style="color:white;">@pie.is_SorumlulukMerkezi</td>
+                    <td style="color:white;">-@kalangun</td>
+                    <td style="color:white;">@pie.Not</td>
+                    <td><a href="/IsEmri/IsEmriGetir/@pie.msg_S_0349" class="btn btn-primary">Not</a></td>
+                    <td><a href="/Siparis/DosyaSec/@pie.msg_S_0352" target="_blank" class="btn btn-primary">Dosya</a></td>
+                </tr>
+            }
+        }
+    }
+</table>
+@Html.PagedListPager((IPagedList)Model, sayfa => Url.Action("SMDIsEmirleri", new { sayfa }))
+
+
